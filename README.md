@@ -14,7 +14,8 @@ _I think for the emails we should use gmail or hotmail here or any other besides
 
 # Activities
 **We can update these as we go or create a log file of the activities done and to be completed**
-Example of how to update the checkbox in markdown
+
+### Example of how to update the checkbox in markdown
 ```
 use - [ ] for unchecked checkboxes the dash then a space then '[' then a space then ']' then a space and the item you want as a checkbox item 
 use - [x] for checked checkboxes
