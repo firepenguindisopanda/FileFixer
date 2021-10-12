@@ -23,3 +23,4 @@ use - [x] for checked checkboxes
 - [ ] Create a scope
 - [ ] Create a team name??
 - [ ] Brainstorm what java project we are going to use to make it. Example Maven, Springboot
+- [ ] Decide on a file naming convention
