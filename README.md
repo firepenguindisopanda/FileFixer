@@ -12,7 +12,7 @@ _This section you instruct other people on how to use your project after they’
 
 # Members
 _I think for the emails we should use gmail or hotmail here or any other besides our school email_
-- memberName memberEmail
+- Jeremy De Freitas jeremydefreitas@hotmail.com
 - Lorenzo La Caille lorenzo.lacaille@hotmail.com
 - Nickal Winter nickwinter01@gmail.com
 - Nicholas Smith nicosmith.smith3@gmail.com
