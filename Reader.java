@@ -16,21 +16,29 @@ public class Reader {
   String file = "SampleData.csv";
   BufferedReader reader = null;
   String line = "";
+  String[][] arr = new String[10][20];
+  int i = 0;
+ 
   
   try {
    reader = new BufferedReader(new FileReader(file));
    while((line = reader.readLine()) != null) {
     
     String[] row = line.split(",");
-   
-     System.out.println(row[1]);
-   /**
-   for(String index : row) {
-     System.out.printf("%-40s", index);
+    
+    
+    for (int j = 0; j < row.length; j++){
+    arr[i][j] = row[j];
+    //System.out.println(arr[i][j]);
     }
-    System.out.println();
-    */
+    i++;
+    
+    
+   
    }
+   
+   
+   
   }
   catch(Exception e) {
    e.printStackTrace();
@@ -43,5 +51,8 @@ public class Reader {
     e.printStackTrace();
    }
   }
+  
+  System.out.println(arr[5][1]);
+  
  }
 }
