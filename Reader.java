@@ -6,19 +6,23 @@
  * @version (a version number or a date)
  */
 import java.io.*;
+import java.util.*;
 
 public class Reader {
 
- public static void main(String[] args) {
+  String[] pathnames;
+  ArrayList<String> names = new ArrayList<String>();
+  String[][] arr = new String[10][20];
   
+  //String file = "SampleData.csv";
   
-  
-  String file = "SampleData.csv";
+ 
+  public void LoadCsvData (String file) throws Exception{
+      
   BufferedReader reader = null;
   String line = "";
-  String[][] arr = new String[10][20];
+  
   int i = 0;
- 
   
   try {
    reader = new BufferedReader(new FileReader(file));
@@ -52,7 +56,40 @@ public class Reader {
    }
   }
   
-  System.out.println(arr[5][1]);
+  //System.out.println(arr[5][1]);
   
- }
+}
+ 
+public void LoadDirectoryFiles() throws Exception{
+
+        File f = new File("/Users/nickalwinter/Desktop/untitled folder");
+        ////// Replace with path of selected folder on your machine!
+        
+        
+        pathnames = f.list();
+
+        for (String pathname : pathnames) {
+            
+            String[] rowz = pathname.split("_");
+            
+            //Checks number of underscores to determine if to rename or not!
+            if (rowz.length > 3){
+                
+                names.add(pathname);
+                
+            }
+            
+            
+            System.out.println(pathname);
+        }
+        
+       
+        
+        
+        
+}
+
+
+
+
 }
