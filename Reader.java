@@ -1,4 +1,5 @@
 
+
 /**
  * Write a description of class Reader here.
  *
@@ -11,7 +12,7 @@ import java.util.*;
 public class Reader {
 
   String[] pathnames;
-  ArrayList<String> names = new ArrayList<String>();
+  List <String> names = new ArrayList<String>();
   String[][] arr = new String[10][20];
   
   //String file = "SampleData.csv";
@@ -67,24 +68,35 @@ public void LoadDirectoryFiles() throws Exception{
         
         
         pathnames = f.list();
+        
+        
 
         for (String pathname : pathnames) {
             
             String[] rowz = pathname.split("_");
             
             //Checks number of underscores to determine if to rename or not!
-            if (rowz.length > 3){
+            if (rowz.length > 5){
                 
+                
+                
+                
+              
                 names.add(pathname);
                 
+                // Collection of files to rename!
             }
             
             
-            System.out.println(pathname);
+            
+            
         }
-        
        
-        
+       System.out.println("Files to rename");
+       
+       System.out.println(names);
+       
+       System.out.println();
         
         
 }
