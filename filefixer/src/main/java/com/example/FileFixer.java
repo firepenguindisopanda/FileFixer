@@ -1,11 +1,4 @@
-package com.example;
 
-/**
- * Write a description of class Runner here.
- *
- * @author (your name)
- * @version (a version number or a date)
- */
 public class FileFixer
 {
     
@@ -14,8 +7,11 @@ public class FileFixer
     
     
     Reader r1 = new Reader();
-    
-    r1.LoadCsvData("SampleData.csv");
-    r1.LoadDirectoryFiles();
+    Rename r = new Rename();
+    String user = System.getProperty("user.home");
+    Student[] student = r1.LoadCsvData(user+"/Desktop/toBeRenamed/Sample.csv");
+    toRename[] rename = r1.LoadDirectoryFiles();
+    r.startRename(student, rename);
+
 }
 }

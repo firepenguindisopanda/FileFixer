@@ -1,18 +1,16 @@
-package com.example;
-
 public class Student implements Individual{
 
     public String PID;
-    public String Fname;
-    public String Lname;
+    public String name;
     public String ID;
+    public Boolean AttendanceStatus;
 
 
-    public Student(String PID, String Fname, String Lname, String ID){
+    public Student(String PID, String name, String ID,Boolean AttendaceStatus){
         this.PID = PID;
-        this.Fname = Fname;
-        this.Lname = Lname;
+        this.name = name;
         this.ID = ID;
+        this.AttendanceStatus = AttendaceStatus;
 
     }
 
@@ -20,16 +18,23 @@ public class Student implements Individual{
         return PID;
     }
 
-    public String getFname() {
-        return Fname;
+    public String getname() {
+        return name;
     }
 
-    public String getLname() {
-        return Lname;
-    }
 
     public String getID() {
         return ID;
+    }
+
+    public Boolean getAttendanceStatus() {
+        return AttendanceStatus;
+    }
+
+    
+    public void setAttendance(Boolean status) {
+        AttendanceStatus = status;
+        
     }
     
 }

@@ -1,20 +1,18 @@
-package com.example;
-
 public class toRename implements Individual {
 
     public String PID;
-    public String Fname;
-    public String Lname;
+    public String name;
     public String ID;
     private java.util.ArrayList <String> toBeRenamed;
+    public Boolean AttendanceStatus;
 
-    public toRename (String PID, String Fname, String Lname, String ID){
+    public toRename (String PID, String name, String ID,Boolean AttendanceStatus){
 
         this.PID = PID;
-        this.Fname = Fname;
-        this.Lname = Lname;
+        this.name = name;
         this.ID = ID;
         toBeRenamed = new java.util.ArrayList<String>();
+        this.AttendanceStatus = AttendanceStatus;
 
 
     }
@@ -23,13 +21,10 @@ public class toRename implements Individual {
         return PID;
     }
 
-    public String getFname() {
-        return Fname;
+    public String getname() {
+        return name;
     }
 
-    public String getLname() {
-        return Lname;
-    }
 
     public String getID() {
         return ID;
@@ -39,8 +34,17 @@ public class toRename implements Individual {
         return toBeRenamed;
     }
     
-    public void addToCombo(String originalfilename){//Mutator for the array that stores the combo list.
+    public void addToList(String originalfilename){//Mutator for the array that stores the combo list.
         toBeRenamed.add(originalfilename);
+    }
+
+    public Boolean getAttendanceStatus() {
+        return AttendanceStatus;
+    }
+
+    public void setAttendance(Boolean status) {
+        AttendanceStatus = status;
+        
     }
     
 }
