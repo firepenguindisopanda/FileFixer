@@ -1,3 +1,4 @@
+package com.example;
 public class Student implements Individual{
 
     public String PID;
@@ -35,6 +36,11 @@ public class Student implements Individual{
     public void setAttendance(Boolean status) {
         AttendanceStatus = status;
         
+    }
+    public String toString(){
+        String message = "";
+        message += "PID: " + getPID() + "\nName: " + getname() + "\nID: " + getID() + "\nHas Attended: " + getAttendanceStatus();
+        return message;
     }
     
 }
