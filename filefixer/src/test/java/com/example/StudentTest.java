@@ -15,6 +15,11 @@ public class StudentTest {
         foo = new Student("601725", "nicholasfoo", "81304376",true);
     }
     @Test
+    public void testStudentInstantiation(){
+        System.out.println("testStudentInstantiation");
+        assertNotNull(foo);
+    }
+    @Test
     public void testGetNameOfStudent(){
         System.out.println("getNameOfStudent");
         String expResult = "nicholasfoo";
