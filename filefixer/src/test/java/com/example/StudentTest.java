@@ -40,22 +40,19 @@ public class StudentTest {
         String actual = foo.getPID();
         assertEquals(expResult, actual);
     }
+    //testGSA
     @Test
     public void testGetStudentAttendance(){
         System.out.println("getAttendanceOfStudent");
         
         Boolean actual = foo.getAttendanceStatus();
-        assertTrue(actual);
+        assertEquals(true, actual);
     }
 
     @Test
     public void testToStringOfStudentClass(){
         System.out.println("TestingToStringOfStudentClass");
-        /**
-         * "PID: " + getPID() + "\nName: " + 
-         * getname() + "\nID: " + getID() + "\nHas Attended: " + 
-         * getAttendanceStatus();
-         */
+        
         String expResult = String.format("PID: %s\nName: %s\nID: %s\nHas Attended: %b", "601725", "nicholasfoo", "81304376", true);
         String actual = String.format("PID: %s\nName: %s\nID: %s\nHas Attended: %b", foo.getPID(), foo.getname(), foo.getID(), foo.getAttendanceStatus());
         assertEquals(expResult, actual);
