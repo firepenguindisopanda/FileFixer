@@ -1,9 +1,12 @@
-package com.example;
-
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 public class Rename {
 
@@ -11,14 +14,16 @@ public class Rename {
 
     }
 
-    public void startRename(Student[] student, ToRename[] rename) {
-        ToRename r1 = rename[0];
+    public void startRename(Student[] student, toRename[] rename) {
+        toRename r1 = rename[0];
         int count = 0;
+        String invalid[] = new String[r1.getToBeRenamedList().size() + 1];
         while (count < r1.getToBeRenamedList().size()) {
 
             int counter = 0;
             Student S1 = student[count];
             Boolean entered = false;
+            Boolean valid = false;
 
             String[] List = new String[r1.getToBeRenamedList().size() + 1];
             String[] splitList = new String[10];
@@ -30,12 +35,14 @@ public class Rename {
             counter = 0;
             while (counter < r1.getToBeRenamedList().size()) {
                 entered = false;
+                valid = false;
                 splitList = List[counter].split("_");
                 SecondsplitList = List[counter].split(" ");
 
                 try {
 
                     if (!List[counter].contains("assignsubmission") && !SecondsplitList[0].contains("-60")) {
+
                         if (S1.getAttendanceStatus().equals(true)) {
                             String[] namesplit = new String[6];
                             namesplit = S1.getname().split(" ");
@@ -43,6 +50,7 @@ public class Rename {
                                     || List[counter].contains(S1.getname().toUpperCase())
                                     || List[counter].contains(S1.getname().toLowerCase())
                                     || List[counter].contains(namesplit[0]) && List[counter].contains(namesplit[1])) {
+                                valid = true;
                                 int x = 0;
                                 String[] split1 = new String[6];
                                 String nameoffile = "";
@@ -162,6 +170,7 @@ public class Rename {
                     }
 
                     if (splitList[2].equals("assignsubmission")) {
+                        valid = true;
                         if (splitList[0].equals(S1.getname())) {
 
                             if (splitList.length == 6) {
@@ -189,6 +198,7 @@ public class Rename {
                     }
 
                     if (splitList[0].contains("14") && splitList[0].contains("-") && splitList[0].contains("60")) {
+                        valid = true;
                         if (S1.getname().contains(splitList[1]) && S1.getname().contains(splitList[2])
                                 && List[counter].contains(S1.getPID())) { // Checks 2 names and PID to match
                                                                           // patrticipant. PID helps with users with
@@ -241,9 +251,23 @@ public class Rename {
                 counter++;
             }
 
+            try {
+                String newpath = System.getProperty("user.dir") + "/newtext.txt";
+                File log = new File(newpath);
+
+                FileWriter fileWriter = new FileWriter(log, true);
+                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+                if (valid == false && !List[count].contains(".csv")) {
+                    invalid[count] = "Invalid file" + " " + List[count];
+                    bufferedWriter.write(invalid[count]);
+                }
+
+            } catch (Exception e) {
+
+            }
             count++;
 
-            if (count == r1.getToBeRenamedList().size() - 1) {
+            if (count == r1.getToBeRenamedList().size() - 1 && valid == true) {
                 System.out.println("");
                 System.out.println("Files renamed in renamedFiles folder in filesToRename folder.");
                 System.out
@@ -265,6 +289,16 @@ public class Rename {
                 }
                 number++;
             }
+            fileOut.close();
+            number = 0;
+            File log = new File(System.getProperty("user.dir") + "//missingSubmissions.txt");
+            FileWriter fileWriter = new FileWriter(log, true);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            while (number < invalid.length + 1) {
+                bufferedWriter.write(invalid[number]);
+                number++;
+            }
+            bufferedWriter.close();
         } catch (Exception e) {
 
         }
