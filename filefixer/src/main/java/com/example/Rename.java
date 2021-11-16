@@ -1,3 +1,4 @@
+package com.example;
 import java.io.File;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -11,8 +12,8 @@ public Rename() {
 }
 
 
-public void startRename(Student[] student, toRename[] rename) {
-    toRename r1 = rename[0];
+public void startRename(Student[] student, ToRename[] rename) {
+    ToRename r1 = rename[0];
     int count = 0;
     int numeral = 0;
     String invalid[] = new String[r1.getToBeRenamedList().size() + 1];
