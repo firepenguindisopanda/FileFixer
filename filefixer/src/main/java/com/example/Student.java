@@ -37,10 +37,5 @@ public class Student implements Individual{
         AttendanceStatus = status;
         
     }
-    public String toString(){
-        String message = "";
-        message += "PID: " + getPID() + "\nName: " + getname() + "\nID: " + getID() + "\nHas Attended: " + getAttendanceStatus();
-        return message;
-    }
     
 }

@@ -1,5 +1,5 @@
 package com.example;
-public class toRename implements Individual {
+public class ToRename implements Individual {
 
     public String PID;
     public String name;
@@ -7,7 +7,7 @@ public class toRename implements Individual {
     private java.util.ArrayList <String> toBeRenamed;
     public Boolean AttendanceStatus;
 
-    public toRename (String PID, String name, String ID,Boolean AttendanceStatus){
+    public ToRename (String PID, String name, String ID,Boolean AttendanceStatus){
 
         this.PID = PID;
         this.name = name;

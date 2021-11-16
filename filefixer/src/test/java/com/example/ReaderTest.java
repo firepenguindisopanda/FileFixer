@@ -18,15 +18,14 @@ public class ReaderTest {
     public void testLoadCsvData(){
         System.out.println("Testing Load Csv Data Function");
         Student[] testLCDOutput;
-        String user = System.getProperty("user.home");
-        testLCDOutput = testReader.LoadCsvData(user+"/Desktop/toBeRenamed/Sample.csv");
+        testLCDOutput = testReader.LoadCsvData();
         assertTrue(testLCDOutput.length > 0);
     }
 
     @Test
     public void testLoadDirectoryFiles(){
         System.out.println("Testing Load Directory Files Function");
-        toRename[] testLDFOutput;
+        ToRename[] testLDFOutput;
         try {
             testLDFOutput = testReader.LoadDirectoryFiles();
             assertTrue(testLDFOutput.length > 0);
