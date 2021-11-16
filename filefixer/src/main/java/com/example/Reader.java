@@ -4,12 +4,16 @@ import java.io.*;
 import java.util.*;
 
 public class Reader {
-  private Student Students[];
-  private toRename toRename[];
+  private Student[] Students;
+  private toRename[] toRename;
   String[] pathnames;
   List<String> names = new ArrayList<String>();
   String[][] arr = new String[10][20];
 
+  /**
+   * Constructor
+   * when instantiated creates two new arrays of Type Student and toRename
+   */
   public Reader() {
 
     Students = new Student[100];
@@ -41,7 +45,7 @@ public class Reader {
 
       fileReader.close();
     } catch (Exception e) {
-
+      e.printStackTrace();
     }
     return Students;
   }
