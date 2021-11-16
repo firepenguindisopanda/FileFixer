@@ -1,307 +1,299 @@
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
-
 public class Rename {
+   
 
-    public Rename() {
 
-    }
+public Rename() {
+ 
+}
 
-    public void startRename(Student[] student, toRename[] rename) {
-        toRename r1 = rename[0];
-        int count = 0;
-        String invalid[] = new String[r1.getToBeRenamedList().size() + 1];
-        while (count < r1.getToBeRenamedList().size()) {
 
-            int counter = 0;
-            Student S1 = student[count];
-            Boolean entered = false;
-            Boolean valid = false;
+public void startRename(Student[] student, toRename[] rename) {
+    toRename r1 = rename[0];
+    int count = 0;
+    int numeral = 0;
+    String invalid[] = new String[r1.getToBeRenamedList().size() + 1];
+    while(count < r1.getToBeRenamedList().size()){ 
+        
+        int counter = 0;
+        Student S1 = student[count];
+        Boolean entered = false;
+        Boolean valid = false;
+        
+        String[] List = new String[r1.getToBeRenamedList().size() + 1];
+        String[] splitList = new String[10];
+        String[] SecondsplitList = new String[6];
+        for (String name: r1.getToBeRenamedList()){ 
+            List[counter] = name;
+            counter++;
+        }
+        counter = 0;
+        while(counter < r1.getToBeRenamedList().size()){
+            entered = false;
+            valid = false;
+            splitList = List[counter].split("_");
+            SecondsplitList = List[counter].split(" ");
+           
+       try{
 
-            String[] List = new String[r1.getToBeRenamedList().size() + 1];
-            String[] splitList = new String[10];
-            String[] SecondsplitList = new String[6];
-            for (String name : r1.getToBeRenamedList()) {
-                List[counter] = name;
-                counter++;
-            }
-            counter = 0;
-            while (counter < r1.getToBeRenamedList().size()) {
-                entered = false;
-                valid = false;
-                splitList = List[counter].split("_");
-                SecondsplitList = List[counter].split(" ");
+        if(!List[counter].contains("assignsubmission") && !SecondsplitList[0].contains("-60")){
+            
+            if(S1.getAttendanceStatus().equals(true)){
+                String[] namesplit = new String[6];
+                namesplit = S1.getname().split(" ");
+                 if(List[counter].contains(S1.getID()) || List[counter].contains(S1.getname()) || List[counter].contains(S1.getname().toUpperCase()) || List[counter].contains(S1.getname().toLowerCase()) || List[counter].contains(namesplit[0]) && List[counter].contains(namesplit[1])){
+                    valid = true;
+                    int x = 0;
+                     String[] split1 = new String[6];
+                     String nameoffile = "";
+                     if(List[counter].contains(S1.getname()) && !List[counter].contains(S1.getID())){
+                        split1 = List[counter].split(S1.getname());
+                         while (x < split1.length){
+                             if(!split1[x].contains(S1.getID())){
+                                 nameoffile += split1[x];
+                             }
+                             x++;
+                         }
+                         entered = true;
+                     }
+                     if(!List[counter].contains(S1.getname()) && !List[counter].contains(S1.getname().toUpperCase()) && !List[counter].contains(S1.getname().toLowerCase())){
+                     
+                        split1 = List[counter].split(S1.getID());
+                         while (x < split1.length){
+                             if(!split1[x].contains(S1.getID()) && !split1[x].contains(S1.getname())){
+                                 nameoffile += split1[x];
+                             }
+                             x++;
+                             
+                         }
+                         entered = true;
+                     }
+                     if(!List[counter].contains(S1.getname()) && List[counter].contains(S1.getname().toUpperCase())){
+                         split1 = List[counter].split(S1.getname().toUpperCase());
+                         while (x < split1.length){
+                             if(!split1[x].contains(S1.getID()) && !split1[x].contains(S1.getname().toUpperCase())){
+                                 nameoffile += split1[x];
+                             }
+                             x++;
+                         }
+                         entered = true;
+                     }
+                    
+                     if(!List[counter].contains(S1.getname()) && List[counter].contains(S1.getname().toLowerCase())){
+                        nameoffile = "";
+                        split1 = List[counter].split(S1.getname().toLowerCase());
+                        while (x < split1.length){
+                            if(!split1[x].contains(S1.getID()) && !split1[x].contains(S1.getname().toLowerCase())){
+                                nameoffile += split1[x];
+                            }
+                            x++;
+                        }
+                        entered = true;
+                    }
 
+                    if(!List[counter].contains(S1.getname()) && !List[counter].contains(S1.getID())){
+                    String n = S1.getname();
+                    n = n.replace(" ", "");
+                    if(List[counter].contains(n)){
+                        nameoffile = "";
+
+                        split1 = List[counter].split(n);
+                        while (x < split1.length){
+                            if(!split1[x].contains(S1.getID()) && !split1[x].contains(n)){
+                                nameoffile += split1[x];
+                            }
+                            x++;
+                        }
+                    }
+                    entered = true;
+                }
+
+                if (List[counter].contains(S1.getname()) && List[counter].contains(S1.getID())){
+                    split1 = List[counter].split(S1.getname());
+                    while (x < split1.length){
+                        if(!split1[x].contains(S1.getname().toUpperCase())){
+                            nameoffile += split1[x];
+                        }
+                        x++;
+                    }
+                    if(nameoffile.contains(S1.getID())){
+                        nameoffile = nameoffile.replace(S1.getID(), "");
+                    }
+                    entered = true;
+                }
+                if(entered.equals(true)){
+
+                     String user = System.getProperty("user.dir");
+                     String Desktop = user+"/"+"filesToRename"+"/"+"renamedFiles"+"/";
+                     File Desk = new File(Desktop);
+                     Desk.mkdir();
+                     String path = user+"/"+"filesToRename/" + List[counter];
+                     File originalFile = new File(path);
+                     nameoffile = nameoffile.replace(".pdf", "");
+                     nameoffile = nameoffile.replace("()", "");
+                     nameoffile = nameoffile.trim();
+                     if(!nameoffile.contains(".pdf")){
+                        
+                        nameoffile = nameoffile + ".pdf";
+                     }
+                     String pathOut = user+"/"+"filesToRename/renamedFiles/"+S1.getname()+"_"+S1.getPID()+"_"+"assignsubmission_file"+"_"+nameoffile;
+                    File newFile = new File(pathOut);
+                    S1.setAttendance(false);//False means present
+                    try {
+                     Files.copy(originalFile.toPath(), newFile.toPath(),StandardCopyOption.REPLACE_EXISTING);
+                    }
+                    catch (Exception e) {
+      
+     
+                     e.printStackTrace();
+                     System.out.println("Error");
+                 }
+                }
+                     
+
+                 }
+
+                }
+             }
+
+         
+
+
+        if(splitList[2].equals("assignsubmission")){
+            valid = true;
+            if(splitList[0].equals(S1.getname())){
+               
+                if(splitList.length == 6){
+                    splitList[4] = splitList[4]+"_"+splitList[5];
+                }
+                String user = System.getProperty("user.dir");
+                String Desktop = user+"/"+"filesToRename"+"/"+"renamedFiles";
+                File Desk = new File(Desktop);
+                Desk.mkdir();
+                String path = user+"/"+"filesToRename/" + List[counter];
+                 File originalFile = new File(path);
+                 String pathOut = user+"/"+"filesToRename/renamedFiles/"+S1.getname()+"_"+S1.getPID()+"_"+"assignsubmission_file"+"_"+splitList[4];
+                File newFile = new File(pathOut);
+                S1.setAttendance(false);//False means present
                 try {
-
-                    if (!List[counter].contains("assignsubmission") && !SecondsplitList[0].contains("-60")) {
-
-                        if (S1.getAttendanceStatus().equals(true)) {
-                            String[] namesplit = new String[6];
-                            namesplit = S1.getname().split(" ");
-                            if (List[counter].contains(S1.getID()) || List[counter].contains(S1.getname())
-                                    || List[counter].contains(S1.getname().toUpperCase())
-                                    || List[counter].contains(S1.getname().toLowerCase())
-                                    || List[counter].contains(namesplit[0]) && List[counter].contains(namesplit[1])) {
-                                valid = true;
-                                int x = 0;
-                                String[] split1 = new String[6];
-                                String nameoffile = "";
-                                if (List[counter].contains(S1.getname()) && !List[counter].contains(S1.getID())) {
-                                    split1 = List[counter].split(S1.getname());
-                                    while (x < split1.length) {
-                                        if (!split1[x].contains(S1.getID())) {
-                                            nameoffile += split1[x];
-                                        }
-                                        x++;
-                                    }
-                                    entered = true;
-                                }
-                                if (!List[counter].contains(S1.getname())
-                                        && !List[counter].contains(S1.getname().toUpperCase())
-                                        && !List[counter].contains(S1.getname().toLowerCase())) {
-
-                                    split1 = List[counter].split(S1.getID());
-                                    while (x < split1.length) {
-                                        if (!split1[x].contains(S1.getID()) && !split1[x].contains(S1.getname())) {
-                                            nameoffile += split1[x];
-                                        }
-                                        x++;
-
-                                    }
-                                    entered = true;
-                                }
-                                if (!List[counter].contains(S1.getname())
-                                        && List[counter].contains(S1.getname().toUpperCase())) {
-                                    split1 = List[counter].split(S1.getname().toUpperCase());
-                                    while (x < split1.length) {
-                                        if (!split1[x].contains(S1.getID())
-                                                && !split1[x].contains(S1.getname().toUpperCase())) {
-                                            nameoffile += split1[x];
-                                        }
-                                        x++;
-                                    }
-                                    entered = true;
-                                }
-
-                                if (!List[counter].contains(S1.getname())
-                                        && List[counter].contains(S1.getname().toLowerCase())) {
-                                    nameoffile = "";
-                                    split1 = List[counter].split(S1.getname().toLowerCase());
-                                    while (x < split1.length) {
-                                        if (!split1[x].contains(S1.getID())
-                                                && !split1[x].contains(S1.getname().toLowerCase())) {
-                                            nameoffile += split1[x];
-                                        }
-                                        x++;
-                                    }
-                                    entered = true;
-                                }
-
-                                if (!List[counter].contains(S1.getname()) && !List[counter].contains(S1.getID())) {
-                                    String n = S1.getname();
-                                    n = n.replace(" ", "");
-                                    if (List[counter].contains(n)) {
-                                        nameoffile = "";
-
-                                        split1 = List[counter].split(n);
-                                        while (x < split1.length) {
-                                            if (!split1[x].contains(S1.getID()) && !split1[x].contains(n)) {
-                                                nameoffile += split1[x];
-                                            }
-                                            x++;
-                                        }
-                                    }
-                                    entered = true;
-                                }
-
-                                if (List[counter].contains(S1.getname()) && List[counter].contains(S1.getID())) {
-                                    split1 = List[counter].split(S1.getname());
-                                    while (x < split1.length) {
-                                        if (!split1[x].contains(S1.getname().toUpperCase())) {
-                                            nameoffile += split1[x];
-                                        }
-                                        x++;
-                                    }
-                                    if (nameoffile.contains(S1.getID())) {
-                                        nameoffile = nameoffile.replace(S1.getID(), "");
-                                    }
-                                    entered = true;
-                                }
-                                if (entered.equals(true)) {
-
-                                    String user = System.getProperty("user.dir");
-                                    String Desktop = user + "/" + "filesToRename" + "/" + "renamedFiles" + "/";
-                                    File Desk = new File(Desktop);
-                                    Desk.mkdir();
-                                    String path = user + "/" + "filesToRename/" + List[counter];
-                                    File originalFile = new File(path);
-                                    nameoffile = nameoffile.replace(".pdf", "");
-                                    nameoffile = nameoffile.replace("()", "");
-                                    nameoffile = nameoffile.trim();
-                                    if (!nameoffile.contains(".pdf")) {
-
-                                        nameoffile = nameoffile + ".pdf";
-                                    }
-                                    String pathOut = user + "/" + "filesToRename/renamedFiles/" + S1.getname() + "_"
-                                            + S1.getPID() + "_" + "assignsubmission_file" + "_" + nameoffile;
-                                    File newFile = new File(pathOut);
-                                    S1.setAttendance(false);// False means present
-                                    try {
-                                        Files.copy(originalFile.toPath(), newFile.toPath(),
-                                                StandardCopyOption.REPLACE_EXISTING);
-                                    } catch (Exception e) {
-
-                                        e.printStackTrace();
-                                        System.out.println("Error");
-                                    }
-                                }
-
-                            }
-
-                        }
-                    }
-
-                    if (splitList[2].equals("assignsubmission")) {
-                        valid = true;
-                        if (splitList[0].equals(S1.getname())) {
-
-                            if (splitList.length == 6) {
-                                splitList[4] = splitList[4] + "_" + splitList[5];
-                            }
-                            String user = System.getProperty("user.dir");
-                            String Desktop = user + "/" + "filesToRename" + "/" + "renamedFiles";
-                            File Desk = new File(Desktop);
-                            Desk.mkdir();
-                            String path = user + "/" + "filesToRename/" + List[counter];
-                            File originalFile = new File(path);
-                            String pathOut = user + "/" + "filesToRename/renamedFiles/" + S1.getname() + "_"
-                                    + S1.getPID() + "_" + "assignsubmission_file" + "_" + splitList[4];
-                            File newFile = new File(pathOut);
-                            S1.setAttendance(false);// False means present
-                            try {
-                                Files.copy(originalFile.toPath(), newFile.toPath(),
-                                        StandardCopyOption.REPLACE_EXISTING);
-                            } catch (Exception e) {
-
-                                e.printStackTrace();
-                                System.out.println("Error");
-                            }
-                        }
-                    }
-
-                    if (splitList[0].contains("14") && splitList[0].contains("-") && splitList[0].contains("60")) {
-                        valid = true;
-                        if (S1.getname().contains(splitList[1]) && S1.getname().contains(splitList[2])
-                                && List[counter].contains(S1.getPID())) { // Checks 2 names and PID to match
-                                                                          // patrticipant. PID helps with users with
-                                                                          // same name.
-                            int num = splitList.length - 2;
-                            while (splitList[num].equals(S1.getPID())) {
-                                splitList[splitList.length - 1] = splitList[num] + "_"
-                                        + splitList[splitList.length - 1];
-
-                                num--;
-                            }
-
-                            num = splitList.length - 2;
-                            while (!splitList[num].equals(S1.getPID())) {
-                                splitList[splitList.length - 2] += "_" + splitList[splitList.length - 1];
-                                splitList[splitList.length - 1] = splitList[splitList.length - 2];
-                                num--;
-
-                            }
-
-                            String user = System.getProperty("user.dir");
-                            String Desktop = user + "/" + "filesToRename" + "/" + "renamedFiles";
-                            File Desk = new File(Desktop);
-                            Desk.mkdir();
-                            String path = user + "/" + "filesToRename/" + List[counter];
-                            File originalFile = new File(path);
-                            splitList[splitList.length - 1] = splitList[splitList.length - 1].replace(S1.getPID() + "_",
-                                    "");
-                            String pathOut = user + "/" + "filesToRename/renamedFiles/" + S1.getname() + "_"
-                                    + S1.getPID() + "_" + "assignsubmission_file" + "_"
-                                    + splitList[splitList.length - 1];
-                            File newFile = new File(pathOut);
-                            S1.setAttendance(false);// False means present
-                            try {
-                                Files.copy(originalFile.toPath(), newFile.toPath(),
-                                        StandardCopyOption.REPLACE_EXISTING);
-                            } catch (Exception e) {
-
-                                e.printStackTrace();
-                                System.out.println("Error");
-                            }
-
-                        }
-                    }
-
-                } catch (Exception e) {
-
+                 Files.copy(originalFile.toPath(), newFile.toPath(),StandardCopyOption.REPLACE_EXISTING);
                 }
-
-                counter++;
-            }
-
-            try {
-                String newpath = System.getProperty("user.dir") + "/newtext.txt";
-                File log = new File(newpath);
-
-                FileWriter fileWriter = new FileWriter(log, true);
-                BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-                if (valid == false && !List[count].contains(".csv")) {
-                    invalid[count] = "Invalid file" + " " + List[count];
-                    bufferedWriter.write(invalid[count]);
-                }
-
-            } catch (Exception e) {
-
-            }
-            count++;
-
-            if (count == r1.getToBeRenamedList().size() - 1 && valid == true) {
-                System.out.println("");
-                System.out.println("Files renamed in renamedFiles folder in filesToRename folder.");
-                System.out
-                        .println("View missingSubmissions.txt in the project folder for list of missing submissions.");
-                System.out.println("");
-            }
-
+                catch (Exception e) {
+  
+ 
+                 e.printStackTrace();
+                 System.out.println("Error");
+             }
+             }
         }
 
-        int number = 0;
-        try {
-            PrintStream fileOut = new PrintStream(System.getProperty("user.dir") + "/missingSubmissions.txt");
-            System.setOut(fileOut);
-            while (number < student.length) {
-                Student S2 = student[number];
-                if (S2.getAttendanceStatus().equals(true)) {
-                    System.out.println("Submission missing: " + S2.getname() + " " + S2.getID());
+   
+                
+                if(splitList[0].contains("14") && splitList[0].contains("-") && splitList[0].contains("60")){
+                    valid = true;
+                    if(S1.getname().contains(splitList[1]) && S1.getname().contains(splitList[2]) && List[counter].contains(S1.getPID())){ //Checks 2 names and PID to match patrticipant. PID helps with users with same name.
+                        int num = splitList.length - 2;
+                        while(splitList[num].equals(S1.getPID())){
+                            splitList[splitList.length -1 ] = splitList[num] + "_" + splitList[splitList.length -1 ];
+                         
+                            num --;
+                        }
 
+                        num = splitList.length - 2;
+                        while(!splitList[num].equals(S1.getPID())){
+                            splitList[splitList.length -2 ] += "_" + splitList[splitList.length -1 ]; 
+                            splitList[splitList.length -1 ] = splitList[splitList.length -2 ];
+                            num --;
+
+                        }
+
+                        String user = System.getProperty("user.dir");
+                        String Desktop = user+"/"+"filesToRename"+"/"+"renamedFiles";
+                        File Desk = new File(Desktop);
+                        Desk.mkdir();
+                        String path = user+"/"+"filesToRename/" + List[counter];
+                        File originalFile = new File(path);
+                        splitList[splitList.length-1] = splitList[splitList.length-1].replace(S1.getPID()+"_", "");
+                        String pathOut = user+"/"+"filesToRename/renamedFiles/"+S1.getname()+"_"+S1.getPID()+"_"+"assignsubmission_file"+"_"+splitList[splitList.length-1];
+                       File newFile = new File(pathOut);
+                       S1.setAttendance(false);//False means present
+                       try {
+                        Files.copy(originalFile.toPath(), newFile.toPath(),StandardCopyOption.REPLACE_EXISTING);
+                       }
+                       catch (Exception e) {
+         
+        
+                        e.printStackTrace();
+                        System.out.println("Error");
+                    }
+
+                    }
                 }
-                number++;
-            }
-            fileOut.close();
-            number = 0;
-            File log = new File(System.getProperty("user.dir") + "//missingSubmissions.txt");
-            FileWriter fileWriter = new FileWriter(log, true);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            while (number < invalid.length + 1) {
-                bufferedWriter.write(invalid[number]);
-                number++;
-            }
-            bufferedWriter.close();
-        } catch (Exception e) {
-
-        }
+   
+       }
+       catch(Exception e){
+     
     }
+
+            counter++;
+        }
+
+        
+        try{
+            
+        if(valid == false && !List[count].contains(".csv")){
+            invalid[numeral] = "Problem submission to review: " + List[count];
+            numeral++;
+        }
+       
+    }
+        catch (Exception e){
+
+        }
+        count++;
+
+        if(count == r1.getToBeRenamedList().size() - 1 && valid == true){
+            System.out.println("");
+            System.out.println("Files renamed in renamedFiles folder in filesToRename folder.");
+            System.out.println("View missingSubmissions.txt in the project folder for list of missing submissions.");
+            System.out.println("");
+        }
+   
+        }
+
+        System.out.println("Check missingSubmissions.txt in project folder for missing submissions or submissions that need review.");
+        System.out.println("");
+        int number = 0;
+        int num = 0;
+
+
+        try{
+            PrintStream fileOut = new PrintStream(System.getProperty("user.dir")+"/missingSubmissions.txt");
+            System.setOut(fileOut);
+            while (num < numeral){
+                System.out.println(invalid[num]);
+                num++;
+            }
+
+        while(number < student.length){
+            Student S2 = student[number];
+            if(S2.getAttendanceStatus().equals(true)){
+                System.out.println("Submission missing: "+ S2.getname() + " " + S2.getID());
+             
+               
+                
+            }
+            number++;
+        }
+        fileOut.close();
+   
+    }
+    catch(Exception e){
+       
+    }
+}
 
 }
