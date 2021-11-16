@@ -7,8 +7,7 @@ public class Reader {
   private Student Students[];
   private ToRename toRename[];
   String[] pathnames;
-  // List <String> names = new ArrayList<String>();
-  // String[][] arr = new String[10][20];
+
 
   public Reader() {
 
@@ -100,8 +99,7 @@ public class Reader {
 
       }
     } catch (Exception e) {
-      System.out.println("");
-      System.out.println("filesToRename folder not found on Desktop!!!");
+
     }
 
     return toRename;
