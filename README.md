@@ -31,36 +31,36 @@ files conforming to a specific convention,
 (convention 2), that is acceptable by myElearning for upload.
 
 The application is intended to be completed by November 17, 2021. 
-Additionally, the application will be developed using two design patterns that will later be specified 
-which will conform to SOLID design principles and will be evaluated using a Test-Driven Design.
+Additionally, the application will be developed using two design patterns namely, Composite and Iterator, 
+which conform to SOLID design principles and will be evaluated using a Test-Driven Design.
 The team members Nicholas Smith, Jeremy De Freitas, Lorenzo La Caille and Nickal Winter 
 will use their understanding of the SOLID design principles and Design patterns to produce a flexible, 
-resilient to change and easy to maintain project.
+resilient and easy to maintain project.
 ```
 
 
 # Installation
-_Instructions for the installation goes here. Tell other users how to install your project locally_
+Download repo as zip and extract it. Open the entire folder in your IDE (preferably VScode).
+Run the program in your IDE and follow on screen instructions or type HELP.
 
 # Usage
 _This section you instruct other people on how to use your project after they’ve installed it. This would also be a good place to include screenshots of your project in action._
 
 # Members
-_I think for the emails we should use gmail or hotmail here or any other besides our school email_
 - Jeremy De Freitas jeremydefreitas@hotmail.com
 - Lorenzo La Caille lorenzo.lacaille@hotmail.com
 - Nickal Winter nickwinter01@gmail.com
 - Nicholas Smith nicosmith.smith3@gmail.com
 
 # Activities
-**We can update these as we go or create a log file of the activities done and to be completed**
+
 
 ### Example of how to update the checkbox in markdown
 ```
 use - [ ] for unchecked checkboxes the dash then a space then '[' then a space then ']' then a space and the item you want as a checkbox item 
 use - [x] for checked checkboxes
 ```
-- [ ] Create a scope
-- [ ] Create a team name??
+- [x] Create a scope
+- [ ] Create a team name
 - [x] Brainstorm what java project we are going to use to make it. Example Maven, Springboot
-- [ ] Decide on a file naming convention for the source code files.
+- [x] Decide on a file naming convention for the source code files.
