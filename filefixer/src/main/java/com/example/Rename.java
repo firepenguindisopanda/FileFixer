@@ -61,7 +61,8 @@ public class Rename {
         while (c < getLength(student)){
             Student s1 = student[c];
             while(counter < numeral){
-            if(invalid[counter].contains(s1.getname()) || invalid[counter].contains(s1.getID()) ){
+            if(invalid[counter].contains(s1.getname()) || invalid[counter].contains(s1.getID()) || invalid[counter].contains(s1.getname().toLowerCase())
+            || invalid[counter].contains(s1.getname().toUpperCase()) || invalid[counter].contains(s1.getname().replace(" ", "")) ){
                  invalid[counter] = "";
             }
             counter++;
