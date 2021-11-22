@@ -17,6 +17,7 @@ public class ReaderTest {
         Student[] testLCDOutput;
         testLCDOutput = testReader.LoadCsvData();
         assertTrue(testLCDOutput.length > 0);
+        
     }
 
     @Test
@@ -26,6 +27,7 @@ public class ReaderTest {
         try {
             testLDFOutput = testReader.LoadDirectoryFiles();
             assertTrue(testLDFOutput.length > 0);
+            
         } catch (Exception e) {
             System.out.println("Error while loading files from directory");
             e.printStackTrace();
