@@ -2,10 +2,10 @@ package com.example;
 
 import java.util.ArrayList;
 
-class FileCollection implements IContainer {
+class FileCollection implements IContainer {//An implementation of the collection
     private java.util.ArrayList <String> toBeRenamed;
 
-    public void getList(ArrayList<String> list){
+    public void getList(ArrayList<String> list){//Method to get the collection from the composite class.
         toBeRenamed = list;
     }
     public IIterator createIterator() {
@@ -14,7 +14,7 @@ class FileCollection implements IContainer {
     }
 
 
-    private class FileIterator implements IIterator{
+    private class FileIterator implements IIterator{//This is the implementation of Iterator(implements the IIterator interface)
         private int m_position;
         
         public Boolean hasNext() 
@@ -36,3 +36,4 @@ class FileCollection implements IContainer {
 
     }
 }
+

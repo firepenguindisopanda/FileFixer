@@ -1,4 +1,6 @@
 package com.example;
+//Leaf class that implements the Individual interface.
+//This class is used to create a Student object that represents a Student.
 public class Student implements Individual{
 
     public String PID;

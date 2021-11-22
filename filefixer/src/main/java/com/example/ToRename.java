@@ -1,10 +1,13 @@
 package com.example;
+
+//Composite class of the Composite design pattern.
+//This class is used to store a collection of file names that need to be renamed.
 public class ToRename implements Individual {
 
     public String PID;
     public String name;
     public String ID;
-    private java.util.ArrayList <String> toBeRenamed;
+    private java.util.ArrayList <String> toBeRenamed;//Collection used to store file names.
     public Boolean AttendanceStatus;
 
     public ToRename (String PID, String name, String ID,Boolean AttendanceStatus){
