@@ -13,7 +13,7 @@ public class Rename {
         filesToRename = rename[0];
         int count = 0;
         int lengthForInvalidList = filesToRename.getToBeRenamedList().size() + 1;
-        System.out.println(lengthForInvalidList);
+        System.out.println(filesToRename.getToBeRenamedList().size());
         invalid = new String[lengthForInvalidList];
         //Calls three classes for three different types of renaming
             SimpleRename.startRenamingProcess(count, filesToRename.getToBeRenamedList().size(), student, rename, fcollection);
@@ -103,5 +103,8 @@ public class Rename {
             e.printStackTrace();
             System.out.println("An error occured while copying the files to newpath");
         }
+    }
+    public static void main(String[] args){
+        
     }
 }
