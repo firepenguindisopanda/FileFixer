@@ -44,7 +44,10 @@ Download repo as zip and extract it. Open the entire folder in your IDE (prefera
 Run the program in your IDE and follow on screen instructions or type HELP.
 
 # Usage
-_This section you instruct other people on how to use your project after they’ve installed it. This would also be a good place to include screenshots of your project in action._
+
+**How to run:**
+* To run the program, place the program folder, _FileFixer_, on the Desktop of your machine.
+* Open the program folder in the IDE of your choice and run the main class, _FileFixer.java_
 
 # Members
 - Jeremy De Freitas jeremydefreitas@hotmail.com
@@ -52,15 +55,4 @@ _This section you instruct other people on how to use your project after they’
 - Nickal Winter nickwinter01@gmail.com
 - Nicholas Smith nicosmith.smith3@gmail.com
 
-# Activities
 
-
-### Example of how to update the checkbox in markdown
-```
-use - [ ] for unchecked checkboxes the dash then a space then '[' then a space then ']' then a space and the item you want as a checkbox item 
-use - [x] for checked checkboxes
-```
-- [x] Create a scope
-- [ ] Create a team name
-- [x] Brainstorm what java project we are going to use to make it. Example Maven, Springboot
-- [x] Decide on a file naming convention for the source code files.
