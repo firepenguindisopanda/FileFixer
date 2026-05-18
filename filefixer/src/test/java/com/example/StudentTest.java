@@ -1,58 +1,69 @@
 package com.example;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class StudentTest {
-    private Student foo;
-    @BeforeEach
-    public void setup(){
-        foo = new Student("601725", "nicholasfoo", "81304376",true);
-    }
+class StudentTest {
+
     @Test
-    public void testStudentInstantiation(){
-        System.out.println("Testing Student Object Instantiation");
-        assertNotNull(foo);
-    }
-    @Test
-    public void testGetNameOfStudent(){
-        System.out.println("Testing the Student Name");
-        String expResult = "nicholasfoo";
-        String result = foo.getname();
-        assertEquals(expResult, result);
-    }
-    @Test
-    public void testGetIDOfStudent(){
-        System.out.println("Testing the Student ID");
-        String expResult = "81304376";
-        String actual = foo.getID();
-        assertEquals(expResult, actual);
-        assertTrue(foo.getID().length() >= 8);
-    }
-    @Test
-    public void testGetPIDOfStudent(){
-        System.out.println("Testing the Student Participant ID");
-        String expResult = "601725";
-        String actual = foo.getPID();
-        assertEquals(expResult, actual);
-    }
-    //testGSA
-    @Test
-    public void testGetStudentAttendance(){
-        System.out.println("Testing the Student attendance value");
-        
-        Boolean actual = foo.getAttendanceStatus();
-        assertEquals(true, actual);
+    void student_instantiation() {
+        Student student = new Student("601725", "John Doe", "81304376", true);
+
+        assertThat(student.getPID()).isEqualTo("601725");
+        assertThat(student.getName()).isEqualTo("John Doe");
+        assertThat(student.getID()).isEqualTo("81304376");
+        assertThat(student.getAttendanceStatus()).isTrue();
     }
 
     @Test
-    public void testToStringOfStudentClass(){
-        System.out.println("Testing the toString output for the Student class");
-        
-        String expResult = String.format("PID: %s\nName: %s\nID: %s\nHas Attended: %b", "601725", "nicholasfoo", "81304376", true);
-        String actual = String.format("PID: %s\nName: %s\nID: %s\nHas Attended: %b", foo.getPID(), foo.getname(), foo.getID(), foo.getAttendanceStatus());
-        assertEquals(expResult, actual);
+    void student_fullConstructor() {
+        Student student = new Student("601725", "John Doe", "81304376",
+            "john@test.com", "Submitted", "85", "100", false, "2024-01-01");
+
+        assertThat(student.getEmail()).isEqualTo("john@test.com");
+        assertThat(student.getStatus()).isEqualTo("Submitted");
+        assertThat(student.getGrade()).isEqualTo("85");
+        assertThat(student.getMaxGrade()).isEqualTo("100");
+        assertThat(student.isGradeCanBeChanged()).isFalse();
+        assertThat(student.getLastModified()).isEqualTo("2024-01-01");
+    }
+
+    @Test
+    void setAttendance_changesStatus() {
+        Student student = new Student("601725", "John Doe", "81304376", true);
+        assertThat(student.getAttendanceStatus()).isTrue();
+
+        student.setAttendance(false);
+        assertThat(student.getAttendanceStatus()).isFalse();
+    }
+
+    @Test
+    void toString_format() {
+        Student student = new Student("601725", "John Doe", "81304376", true);
+
+        assertThat(student.toString())
+            .contains("601725")
+            .contains("John Doe")
+            .contains("81304376");
+    }
+
+    @Test
+    void constructor_throwsOnNullPid() {
+        assertThatThrownBy(() -> new Student(null, "John Doe", "81304376", true))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void constructor_throwsOnBlankName() {
+        assertThatThrownBy(() -> new Student("601725", "", "81304376", true))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void constructor_throwsOnNullId() {
+        assertThatThrownBy(() -> new Student("601725", "John Doe", null, true))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }
