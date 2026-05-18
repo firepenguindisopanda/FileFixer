@@ -1,54 +1,61 @@
 package com.example;
 
-//Composite class of the Composite design pattern.
-//This class is used to store a collection of file names that need to be renamed.
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class ToRename implements Individual {
 
-    public String PID;
-    public String name;
-    public String ID;
-    private java.util.ArrayList <String> toBeRenamed;//Collection used to store file names.
-    public Boolean AttendanceStatus;
+    private final String pid;
+    private final String name;
+    private final String id;
+    private boolean attendanceStatus;
+    private final List<String> toBeRenamed;
 
-    public ToRename (String PID, String name, String ID,Boolean AttendanceStatus){
-
-        this.PID = PID;
+    public ToRename(String pid, String name, String id, boolean attendanceStatus) {
+        this.pid = pid;
         this.name = name;
-        this.ID = ID;
-        toBeRenamed = new java.util.ArrayList<String>();
-        this.AttendanceStatus = AttendanceStatus;
-
-
+        this.id = id;
+        this.attendanceStatus = attendanceStatus;
+        this.toBeRenamed = new ArrayList<>();
     }
 
+    @Override
     public String getPID() {
-        return PID;
+        return pid;
     }
 
-    public String getname() {
+    @Override
+    public String getName() {
         return name;
     }
 
-
+    @Override
     public String getID() {
-        return ID;
+        return id;
     }
 
-    public java.util.ArrayList<String> getToBeRenamedList(){//Accessor for arraylist that stores the combo list.
-        return toBeRenamed;
-    }
-    
-    public void addToList(String originalfilename){//Mutator for the array that stores the combo list.
-        toBeRenamed.add(originalfilename);
+    @Override
+    public boolean getAttendanceStatus() {
+        return attendanceStatus;
     }
 
-    public Boolean getAttendanceStatus() {
-        return AttendanceStatus;
+    @Override
+    public void setAttendance(boolean status) {
+        this.attendanceStatus = status;
     }
 
-    public void setAttendance(Boolean status) {
-        AttendanceStatus = status;
-        
+    public List<String> getToBeRenamedList() {
+        return Collections.unmodifiableList(toBeRenamed);
     }
-    
+
+    public void addToList(String originalFilename) {
+        if (originalFilename != null && !originalFilename.isBlank()) {
+            toBeRenamed.add(originalFilename);
+        }
+    }
+
+    public int getFileCount() {
+        return toBeRenamed.size();
+    }
 }

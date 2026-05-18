@@ -1,99 +1,78 @@
 package com.example;
 
-import java.io.File;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 public class StandardRename {
-    private static String[] listOfFilesToBeRenamed;
-    private static String[] firstSplitList;
-    private static String[] invalidSubmissions;
-    private static int numeral;
-    static Boolean valid;
-    
-    public static void startRenamingProcess(int count, int sizeOfRenamingList, Student[] student, ToRename[] rename, FileCollection f) {
-        int nameCounter = 0;
-        int counter = 0;
-        numeral = 0;
-        valid = false;
-        listOfFilesToBeRenamed = new String[sizeOfRenamingList + 1];
-        invalidSubmissions = new String [100];
-        firstSplitList = new String[10];
-        IIterator file = f.createIterator();
 
+    private static final Logger logger = LoggerFactory.getLogger(StandardRename.class);
 
-        // Add the files to a list to rename
-        while(file.hasNext()) {
-            listOfFilesToBeRenamed[nameCounter] = file.next().toString();
-            nameCounter++;
+    static void startRenamingProcess(List<Student> students, FileCollection fileCollection,
+                                      Path outputDir, List<String> invalidSubmissions) {
+        try {
+            Files.createDirectories(outputDir);
+        } catch (IOException e) {
+            logger.error("Failed to create output directory: {}", outputDir);
+            return;
         }
-        count = 0;
-        while(count < listOfFilesToBeRenamed.length - 1) {
-            firstSplitList = listOfFilesToBeRenamed[count].split("_"); 
 
-        while (counter < Rename.getLength(student) ) {
-            Student aStudentFileToRename = student[counter];
-            try {
-                valid = false;
-                if (firstSplitList[0].contains("14") && firstSplitList[0].contains("-") && firstSplitList[0].contains("60")) {
-                    valid = true;
-                    if (aStudentFileToRename.getname().contains(firstSplitList[1])
-                            && aStudentFileToRename.getname().contains(firstSplitList[2])
-                            && listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getPID())) {
-                        int num = firstSplitList.length - 2;
-                        while (firstSplitList[num].equals(aStudentFileToRename.getPID())) {
-                            firstSplitList[firstSplitList.length - 1] = firstSplitList[num] + "_"
-                                    + firstSplitList[firstSplitList.length - 1];
-                            num--;
-                        }
-                        num = firstSplitList.length - 2;
-                        while (!firstSplitList[num].equals(aStudentFileToRename.getPID())) {
-                            firstSplitList[firstSplitList.length - 2] += "_"
-                                    + firstSplitList[firstSplitList.length - 1];
-                            firstSplitList[firstSplitList.length - 1] = firstSplitList[firstSplitList.length - 2];
+        Path baseDir = outputDir.getParent();
 
-                            num--;
-                        }
-                        String user = System.getProperty("user.dir");
-                        String desktop = user + "/filesToRename/renamedFiles";
-                        File desk = new File(desktop);
-                        desk.mkdir();
-                        String path = user + "/filesToRename/" + listOfFilesToBeRenamed[count];
-                        File originalFile = new File(path);
-                        firstSplitList[firstSplitList.length - 1] = firstSplitList[firstSplitList.length - 1]
-                                .replace(aStudentFileToRename.getPID() + "_", "");
-                        String pathToRenamedFiles = user + "/filesToRename/renamedFiles/"
-                                + aStudentFileToRename.getname() + "_" + aStudentFileToRename.getPID()
-                                + "_assignsubmission_file_" + firstSplitList[firstSplitList.length - 1];
-                        File newFile = new File(pathToRenamedFiles);
-                        aStudentFileToRename.setAttendance(false); // False means present
-                        Rename.copyFiles(originalFile, newFile);
+        for (String fileName : fileCollection) {
+            if (fileName.contains(".csv")) continue;
 
-                    }
+            String[] parts = fileName.split("_");
+            if (parts.length < 3) continue;
+
+            if (!(parts[0].contains("14") && parts[0].contains("-") && parts[0].contains("60"))) continue;
+
+            boolean matched = false;
+            for (Student student : students) {
+                if (!(student.getName().contains(parts[1])
+                    && student.getName().contains(parts[2])
+                    && fileName.contains(student.getPID()))) continue;
+
+                String assignmentPart = parts[parts.length - 1];
+
+                int num = parts.length - 2;
+                while (num >= 0 && parts[num].equals(student.getPID())) {
+                    assignmentPart = parts[num] + "_" + assignmentPart;
+                    num--;
                 }
 
-            } catch (Exception e) {
-                
+                num = parts.length - 2;
+                while (num >= 0 && !parts[num].equals(student.getPID())) {
+                    assignmentPart = parts[num] + "_" + assignmentPart;
+                    num--;
+                }
+
+                assignmentPart = assignmentPart.replace(student.getPID() + "_", "");
+
+                String newFileName = student.getName() + "_" + student.getPID()
+                    + "_assignsubmission_file_" + assignmentPart + ".pdf";
+
+                Path source = baseDir.resolve(fileName);
+                Path target = outputDir.resolve(newFileName);
+
+                try {
+                    Files.copy(source, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    student.setAttendance(false);
+                    matched = true;
+                    logger.info("Renamed (standard): {} -> {}", fileName, newFileName);
+                } catch (IOException e) {
+                    logger.error("Failed to copy {}: {}", fileName, e.getMessage());
+                }
+                break;
             }
-            counter++;
-        }
 
-        try{
-        if (!valid && !listOfFilesToBeRenamed[count].contains(".csv") && listOfFilesToBeRenamed[count].contains(".pdf") && SimpleRename.valid.equals(false) && ComplexRename.valid.equals(false)){  
-            invalidSubmissions[numeral] = "Problem submission to review: " + listOfFilesToBeRenamed[count];
-            numeral++;
+            if (!matched && fileName.toLowerCase().endsWith(".pdf")) {
+                invalidSubmissions.add("Problem submission to review: " + fileName);
+            }
         }
-        } catch (Exception e){
-            
-        }
-
-        numeral = Rename.checkValidity(valid, numeral, listOfFilesToBeRenamed, count );
-        counter=0;
-        count++;
     }
-        Rename.generateTXT(count, sizeOfRenamingList, valid, numeral, invalidSubmissions, student, listOfFilesToBeRenamed);
-
-    }
-
-
 }

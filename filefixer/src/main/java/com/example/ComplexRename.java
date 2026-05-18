@@ -1,227 +1,155 @@
 package com.example;
 
-import java.io.File;
-public class ComplexRename{
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    private static String[] listOfFilesToBeRenamed;
-    private static int numeral;
-    static Boolean valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
-public static void startRenamingProcess(int count, int sizeOfRenamingList, Student[] student, ToRename[] rename, FileCollection f) {
+public class ComplexRename {
 
-    int nameCounter = 0;
-    int counter = 0;
-    numeral = 0;
-    Boolean entered = false;
-    valid = false;
-    listOfFilesToBeRenamed = new String[sizeOfRenamingList + 1];
-    String[] secondSplitList = new String[6];
-    IIterator file = f.createIterator();
+    private static final Logger logger = LoggerFactory.getLogger(ComplexRename.class);
 
-
-    // Add the files to a list to rename
-    while(file.hasNext()) {
-        listOfFilesToBeRenamed[nameCounter] = file.next().toString();
-        nameCounter++;
-    }
-    count = 0;
-    while(count < listOfFilesToBeRenamed.length - 1) {
-        secondSplitList = listOfFilesToBeRenamed[count].split(" ");
-
-    while (counter < Rename.getLength(student)) {
-        Student aStudentFileToRename = student[counter];
-        entered = false;
-        valid = false;
-
-
+    static void startRenamingProcess(List<Student> students, FileCollection fileCollection,
+                                      Path outputDir, List<String> invalidSubmissions) {
         try {
-            // if the string at position counter doesn't contain "assignsubmission"
-            // and if string at position 0 doesn't contain "-60"
-            // and if the attendance value is true
-            // enter this if statement
-            if (!listOfFilesToBeRenamed[count].contains("assignsubmission") && !secondSplitList[0].contains("-60")
-                    && aStudentFileToRename.getAttendanceStatus()) {
-                String[] nameSplit = aStudentFileToRename.getname().split(" ");
-                if (listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getID())
-                        || listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getname())
-                        || listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getname().toUpperCase())
-                        || listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getname().toLowerCase())
-                        || listOfFilesToBeRenamed[count].contains(nameSplit[0])
-                                && listOfFilesToBeRenamed[count].contains(nameSplit[1])) {
-                    valid = true;
-                    int splitCount = 0;
-                    String[] splitOne = new String[6];
-                    String nameOfFile = "";
-                    /**
-                     * if at position counter it contains the value of
-                     * aStudentFileToRename.getname() and it doesn't contain an ID corresponding to
-                     * aStudentFileToRename.getId() value create the name of the file and assign it
-                     * to nameOfFile
-                     */
-                    if (listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getname())
-                            && !listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getID())) {
-                        splitOne = listOfFilesToBeRenamed[count].split(aStudentFileToRename.getname());
-                        while (splitCount < splitOne.length) {
-                            if (!splitOne[splitCount].contains(aStudentFileToRename.getID())) {
-                                nameOfFile += splitOne[splitCount];
-                            }
-                            splitCount++;
-                        }
-                        entered = true;
-                    }
+            Files.createDirectories(outputDir);
+        } catch (IOException e) {
+            logger.error("Failed to create output directory: {}", outputDir);
+            return;
+        }
 
-                    /**
-                     * checks if String at position counter doesn't contain
-                     * aStudentFileToRename.getname() value and different variations of it.
-                     * 
-                     */
-                    if (!listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getname())
-                            && !listOfFilesToBeRenamed[count]
-                                    .contains(aStudentFileToRename.getname().toUpperCase())
-                            && !listOfFilesToBeRenamed[count]
-                                    .contains(aStudentFileToRename.getname().toLowerCase())) {
-                        splitOne = listOfFilesToBeRenamed[count].split(aStudentFileToRename.getID());
-                        while (splitCount < splitOne.length) {
-                            if (!splitOne[splitCount].contains(aStudentFileToRename.getID())
-                                    && !splitOne[splitCount].contains(aStudentFileToRename.getname())) {
-                                nameOfFile += splitOne[splitCount];
-                            }
-                            splitCount++;
-                        }
-                        entered = true;
+        Path baseDir = outputDir.getParent();
 
-                    }
+        for (String fileName : fileCollection) {
+            if (fileName.contains(".csv")) continue;
 
-                    /**
-                     * checks if String at position counter doesn't contain
-                     * aStudentFileToRename.getname() value and if it does contain the uppercase
-                     * version of the name
-                     * 
-                     */
-                    if (!listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getname())
-                            && listOfFilesToBeRenamed[count]
-                                    .contains(aStudentFileToRename.getname().toUpperCase())) {
-                        splitOne = listOfFilesToBeRenamed[count]
-                                .split(aStudentFileToRename.getname().toUpperCase());
-                        while (splitCount < splitOne.length) {
-                            if (!splitOne[splitCount].contains(aStudentFileToRename.getID())
-                                    && !splitOne[splitCount]
-                                            .contains(aStudentFileToRename.getname().toUpperCase())) {
-                                nameOfFile += splitOne[splitCount];
-                            }
-                            splitCount++;
-                        }
-                        entered = true;
-                    }
+            String[] spaceSplit = fileName.split(" ");
+            if (spaceSplit.length == 0) continue;
 
-                    /**
-                     * checks if String at position counter doesn't contain
-                     * aStudentFileToRename.getname() value and if it does contain the lowercase
-                     * version of the name
-                     */
-                    if (!listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getname())
-                            && listOfFilesToBeRenamed[count]
-                                    .contains(aStudentFileToRename.getname().toLowerCase())) {
-                        splitOne = listOfFilesToBeRenamed[count]
-                                .split(aStudentFileToRename.getname().toLowerCase());
-                        while (splitCount < splitOne.length) {
-                            if (!splitOne[splitCount].contains(aStudentFileToRename.getID())
-                                    && !splitOne[splitCount]
-                                            .contains(aStudentFileToRename.getname().toLowerCase())) {
-                                nameOfFile += splitOne[splitCount];
-                            }
-                            splitCount++;
-                        }
-                        entered = true;
-                    }
+            if (fileName.contains("assignsubmission")) continue;
+            if (spaceSplit[0].contains("-60")) continue;
 
-                    /**
-                     * checks if String at position counter doesn't contain the name value
-                     * corresponding to the current aStudentFileToRename Object and if String at
-                     * position counter doesn't contain the ID value corresponding to the current
-                     * aStudentFileToRename Object
-                     */
-                    if (!listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getname())
-                            && !listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getID())) {
-                        String fileName = aStudentFileToRename.getname();
-                        fileName = fileName.replace(" ", "");
-                        if (listOfFilesToBeRenamed[counter].contains(fileName)) {
-                            nameOfFile = "";
-                            splitOne = listOfFilesToBeRenamed[count].split(fileName);
-                            while (splitCount < splitOne.length) {
-                                if (!splitOne[splitCount].contains(aStudentFileToRename.getID())
-                                        && !splitOne[splitCount].contains(fileName)) {
-                                    nameOfFile += splitOne[splitCount];
-                                }
-                                splitCount++;
-                            }
-                        }
-                        entered = true;
-                    }
+            boolean matched = false;
 
-                    /**
-                     * checks if the String at position counter contains the aStudentFileToRename
-                     * getname() value and getID() value
-                     * 
-                     */
-                    if (listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getname())
-                            && listOfFilesToBeRenamed[count].contains(aStudentFileToRename.getID())) {
-                        splitOne = listOfFilesToBeRenamed[count].split(aStudentFileToRename.getname());
-                        while (splitCount < splitOne.length) {
-                            if (!splitOne[splitCount].contains(aStudentFileToRename.getname().toUpperCase())) {
-                                nameOfFile += splitOne[splitCount];
-                            }
-                            splitCount++;
-                        }
-                        if (nameOfFile.contains(aStudentFileToRename.getID())) {
-                            nameOfFile = nameOfFile.replace(aStudentFileToRename.getID(), "");
+            for (Student student : students) {
+                if (!student.getAttendanceStatus()) continue;
 
-                        }
-                        entered = true;
+                String[] nameSplit = student.getName().split(" ");
+                boolean nameMatch = fileName.contains(student.getID())
+                    || fileName.contains(student.getName())
+                    || fileName.contains(student.getName().toUpperCase())
+                    || fileName.contains(student.getName().toLowerCase())
+                    || (nameSplit.length >= 2
+                        && fileName.contains(nameSplit[0])
+                        && fileName.contains(nameSplit[1]));
 
-                    }
+                if (!nameMatch) continue;
 
-                    if (entered) {
-                        String user = System.getProperty("user.dir");
-                        String desktop = user + "/" + "filesToRename" + "/" + "renamedFiles/";
-                        File desk = new File(desktop);
-                        desk.mkdir();
-                        String path = user + "/filesToRename/" + listOfFilesToBeRenamed[count];
-                        File originalFile = new File(path);
-                        nameOfFile = nameOfFile.replace(".pdf", "");
-                        nameOfFile = nameOfFile.replace("()", "");
-                        nameOfFile = nameOfFile.trim();
-                        if (!nameOfFile.contains(".pdf")) {
-                            nameOfFile = nameOfFile + ".pdf";
-                        }
-                        String pathToRenamedFiles = user + "/filesToRename/renamedFiles/"
-                                + aStudentFileToRename.getname() + "_" + aStudentFileToRename.getPID()
-                                + "_assignsubmission_file_" + nameOfFile;
-                        File newFile = new File(pathToRenamedFiles);
-                        aStudentFileToRename.setAttendance(false); // this means present
-                        Rename.copyFiles(originalFile, newFile);
+                String nameOfFile = extractNameOfFile(fileName, student);
+                if (nameOfFile == null) continue;
 
-                    }
-
+                nameOfFile = nameOfFile.replace(".pdf", "").replace("()", "").trim();
+                if (!nameOfFile.endsWith(".pdf")) {
+                    nameOfFile = nameOfFile + ".pdf";
                 }
 
+                String newFileName = student.getName() + "_" + student.getPID()
+                    + "_assignsubmission_file_" + nameOfFile;
+
+                Path source = baseDir.resolve(fileName);
+                Path target = outputDir.resolve(newFileName);
+
+                try {
+                    Files.copy(source, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    student.setAttendance(false);
+                    matched = true;
+                    logger.info("Renamed (complex): {} -> {}", fileName, newFileName);
+                } catch (IOException e) {
+                    logger.error("Failed to copy {}: {}", fileName, e.getMessage());
+                }
+                break;
             }
 
-        } catch (Exception e) {
+            if (!matched && fileName.toLowerCase().endsWith(".pdf")) {
+                invalidSubmissions.add("Problem submission to review: " + fileName);
+            }
         }
-        counter++;
     }
-    try{
 
-    } catch (Exception e){
+    private static String extractNameOfFile(String fileName, Student student) {
+        String nameOfFile = "";
 
+        if (fileName.contains(student.getName()) && !fileName.contains(student.getID())) {
+            String[] split = fileName.split(student.getName(), -1);
+            for (String part : split) {
+                if (!part.contains(student.getID())) {
+                    nameOfFile += part;
+                }
+            }
+            return nameOfFile;
+        }
+
+        if (!fileName.contains(student.getName())
+            && !fileName.contains(student.getName().toUpperCase())
+            && !fileName.contains(student.getName().toLowerCase())) {
+            String[] split = fileName.split(student.getID(), -1);
+            for (String part : split) {
+                if (!part.contains(student.getID()) && !part.contains(student.getName())) {
+                    nameOfFile += part;
+                }
+            }
+            return nameOfFile;
+        }
+
+        if (!fileName.contains(student.getName()) && fileName.contains(student.getName().toUpperCase())) {
+            String[] split = fileName.split(student.getName().toUpperCase(), -1);
+            for (String part : split) {
+                if (!part.contains(student.getID()) && !part.contains(student.getName().toUpperCase())) {
+                    nameOfFile += part;
+                }
+            }
+            return nameOfFile;
+        }
+
+        if (!fileName.contains(student.getName()) && fileName.contains(student.getName().toLowerCase())) {
+            String[] split = fileName.split(student.getName().toLowerCase(), -1);
+            for (String part : split) {
+                if (!part.contains(student.getID()) && !part.contains(student.getName().toLowerCase())) {
+                    nameOfFile += part;
+                }
+            }
+            return nameOfFile;
+        }
+
+        if (!fileName.contains(student.getName()) && !fileName.contains(student.getID())) {
+            String noSpaceName = student.getName().replace(" ", "");
+            if (fileName.contains(noSpaceName)) {
+                String[] split = fileName.split(noSpaceName, -1);
+                for (String part : split) {
+                    if (!part.contains(student.getID()) && !part.contains(noSpaceName)) {
+                        nameOfFile += part;
+                    }
+                }
+                return nameOfFile;
+            }
+        }
+
+        if (fileName.contains(student.getName()) && fileName.contains(student.getID())) {
+            String[] split = fileName.split(student.getName(), -1);
+            for (String part : split) {
+                if (!part.contains(student.getName().toUpperCase())) {
+                    nameOfFile += part;
+                }
+            }
+            if (nameOfFile.contains(student.getID())) {
+                nameOfFile = nameOfFile.replace(student.getID(), "");
+            }
+            return nameOfFile;
+        }
+
+        return null;
     }
-    numeral = Rename.checkValidity(valid, numeral, listOfFilesToBeRenamed, count );
-    counter=0;
-    count++;
-}
-   
-
-}
-
 }

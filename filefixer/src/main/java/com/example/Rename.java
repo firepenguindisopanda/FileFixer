@@ -1,106 +1,76 @@
 package com.example;
 
-import java.io.File;
-import java.io.PrintStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Rename {
-    private ToRename filesToRename;
-    private static String[] invalid;
 
-    public void startRename(Student[] student, ToRename[] rename, FileCollection fcollection) {
-        filesToRename = rename[0];
-        int count = 0;
-        int lengthForInvalidList = filesToRename.getToBeRenamedList().size() + 1;
-        invalid = new String[lengthForInvalidList];
-        //Calls three classes for three different types of renaming
-            SimpleRename.startRenamingProcess(count, filesToRename.getToBeRenamedList().size(), student, rename, fcollection);
-            StandardRename.startRenamingProcess(count, filesToRename.getToBeRenamedList().size(), student, rename, fcollection);
-            ComplexRename.startRenamingProcess(count, filesToRename.getToBeRenamedList().size(), student, rename, fcollection);
+    private static final Logger logger = LoggerFactory.getLogger(Rename.class);
+    private final Path outputDir;
+    private final List<String> invalidSubmissions = new ArrayList<>();
 
-            count++;
-
-    }
-    
-
-    public static int checkValidity(Boolean valid, int numeral,  String[] listOfFilesToBeRenamed, int count){
-
-        if (valid.equals(false) && !listOfFilesToBeRenamed[count].contains(".csv") && listOfFilesToBeRenamed[count].contains(".pdf")){  
-            invalid[numeral] = "Problem submission to review: " + listOfFilesToBeRenamed[count];
-            numeral++;
-        }
-        return numeral;
+    public Rename(Path outputDir) {
+        this.outputDir = outputDir;
     }
 
-    public static int getLength(Student[] arr){
-        int count = 0;
-        for(Student el : arr)
-            if (el != null)
-            count++;
-        return count;
+    public void startRename(List<Student> students, ToRename toRename, FileCollection fileCollection) {
+        fileCollection.setFiles(toRename.getToBeRenamedList());
+
+        SimpleRename.startRenamingProcess(students, fileCollection, outputDir, invalidSubmissions);
+        StandardRename.startRenamingProcess(students, fileCollection, outputDir, invalidSubmissions);
+        ComplexRename.startRenamingProcess(students, fileCollection, outputDir, invalidSubmissions);
+
+        generateReport(students);
     }
 
-    public static void generateTXT(int count, int sizeOfRenamingList, Boolean valid, int numeral, String[] invalidSubmissions, 
-    Student[] student, String[] listOfFilesToBeRenamed ){
-        if (count == sizeOfRenamingList - 1 && valid == true) {
-            System.out.println("\nFiles renamed in renamedFiles folder in filesToRename folder.");
-            System.out.println("\nView missingSubmissions.txt in the project folder for the list of missing submissions.\n");
-        }
-    
-    // preparing the missing submissions text file
-    System.out.println("Check missingSubmissions.txt in project for missing submissions or submissions that need review.\n");
+    private void generateReport(List<Student> students) {
+        Path reportPath = outputDir.resolveSibling("missingSubmissions.txt");
 
-    int number = 0;
-    int num = 0;
-    try {
-        PrintStream fileOut = new PrintStream(System.getProperty("user.dir") + "/missingSubmissions.txt");
-        System.setOut(fileOut);
-        int c = 0;
-        int counter = 0;
-        while (c < getLength(student)){
-            Student s1 = student[c];
-            while(counter < numeral){
-            if(invalid[counter].contains(s1.getname()) || invalid[counter].contains(s1.getID()) || invalid[counter].contains(s1.getname().toLowerCase())
-            || invalid[counter].contains(s1.getname().toUpperCase()) || invalid[counter].contains(s1.getname().replace(" ", "")) ){
-                 invalid[counter] = "";
-            }
-            counter++;
-            }
-            counter = 0;
-            c++;
-        }
-
-        while (num < numeral) {
-            if(!invalid[num].equals("")){
-            System.out.println(invalid[num]);
-            }
-            num++;
-        }
-
-        while (number < getLength(student)) {
-            Student missingStudent = student[number];
-            if (missingStudent.getAttendanceStatus()) {
-                System.out.println("Submission missing: " + missingStudent.getname() + " " + missingStudent.getID());
-                
-
-            }
-            number++;
-        }
-        fileOut.close();
-    } catch (Exception e) {
-       
-    }
-}
-
-
-    public static void copyFiles(File originalFile, File newFile) {
         try {
-            Files.copy(originalFile.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            List<String> lines = new ArrayList<>();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("An error occured while copying the files to newpath");
+            List<String> unmatchedInvalid = new ArrayList<>(invalidSubmissions);
+            for (Student student : students) {
+                unmatchedInvalid.removeIf(invalid ->
+                    invalid.contains(student.getName())
+                    || invalid.contains(student.getID())
+                    || invalid.contains(student.getName().toLowerCase())
+                    || invalid.contains(student.getName().toUpperCase())
+                    || invalid.contains(student.getName().replace(" ", ""))
+                );
+            }
+
+            for (String invalid : unmatchedInvalid) {
+                if (!invalid.isBlank()) {
+                    lines.add(invalid);
+                }
+            }
+
+            for (Student student : students) {
+                if (student.getAttendanceStatus()) {
+                    lines.add("Submission missing: " + student.getName() + " " + student.getID());
+                }
+            }
+
+            Files.write(reportPath, lines);
+            logger.info("Report written to {}", reportPath);
+        } catch (IOException e) {
+            logger.error("Failed to write report: {}", e.getMessage());
+        }
+    }
+
+    public static void copyFiles(Path originalFile, Path newFile) {
+        try {
+            Files.copy(originalFile, newFile, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            logger.error("Failed to copy {} to {}: {}", originalFile, newFile, e.getMessage());
         }
     }
 }

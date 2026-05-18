@@ -1,39 +1,26 @@
 package com.example;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-class FileCollection implements IContainer {//An implementation of the collection
-    private java.util.ArrayList <String> toBeRenamed;
+public class FileCollection implements Iterable<String> {
 
-    public void getList(ArrayList<String> list){//Method to get the collection from the composite class.
-        toBeRenamed = list;
-    }
-    public IIterator createIterator() {
-        FileIterator result = new FileIterator();
-        return result;
-    }
+    private final List<String> filesToRename = new ArrayList<>();
 
-
-    private class FileIterator implements IIterator{//This is the implementation of Iterator(implements the IIterator interface)
-        private int m_position;
-        
-        public Boolean hasNext() 
-        {
-            if (m_position < toBeRenamed.size())
-                return true;
-            else
-                return false;
+    public void setFiles(List<String> files) {
+        filesToRename.clear();
+        if (files != null) {
+            filesToRename.addAll(files);
         }
+    }
 
-       
-        public Object next() 
-        {
-            if(this.hasNext())
-                return toBeRenamed.get(m_position++);
-            else    
-                return null;
-        }
+    @Override
+    public Iterator<String> iterator() {
+        return filesToRename.iterator();
+    }
 
+    public int size() {
+        return filesToRename.size();
     }
 }
-

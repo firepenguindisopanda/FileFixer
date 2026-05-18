@@ -1,108 +1,130 @@
 package com.example;
 
-import java.io.*;
-import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Reader {
-  private Student Students[];
-  private ToRename toRename[];
-  String[] pathnames;
 
+    private static final Logger logger = LoggerFactory.getLogger(Reader.class);
+    private final Path baseDir;
 
-  public Reader() {
+    public Reader() {
+        this(Paths.get(System.getProperty("user.dir"), "filesToRename"));
+    }
 
-    Students = new Student[200];
-    toRename = new ToRename[1];
-  }
+    public Reader(Path baseDir) {
+        this.baseDir = baseDir;
+    }
 
-  public Student[] LoadCsvData() {
-    try {
+    public List<Student> loadCsvData() throws FileFixerException {
+        ensureDirectoryExists();
 
-      String user = System.getProperty("user.dir");
-      File f = new File(user + "/filesToRename");
-      pathnames = f.list();
-      int numcsv = 0;
-      String csvpath = "";
-
-      for (String pathname : pathnames) {
-
-        if (pathname.contains(".csv")) {
-          numcsv++;
-          csvpath = user + "/filesToRename/" + pathname;
+        List<Path> csvFiles = findCsvFiles();
+        if (csvFiles.isEmpty()) {
+            throw new FileFixerException("No CSV files found in the filesToRename folder");
+        }
+        if (csvFiles.size() > 1) {
+            throw new FileFixerException("Multiple CSV files found. Please place only 1 CSV file in the folder");
         }
 
-      }
+        Path csvPath = csvFiles.get(0);
+        logger.info("Reading CSV: {}", csvPath.getFileName());
 
-      if (numcsv > 1) {// Error handling for multiple CSVs
-        System.out.println("");
-        System.out.println("Mulitple CSV files were found in the filesToRename folder!!!");
-        System.out.println("Please place only 1 CSV file in the folder and rerun the program.");
-        System.out.println("");
-        System.exit(0);
-      }
+        List<Student> students = new ArrayList<>();
+        try (var lines = Files.lines(csvPath)) {
+            boolean headerSkipped = false;
+            int lineNum = 0;
+            for (String line : lines.toList()) {
+                lineNum++;
+                if (!headerSkipped) {
+                    headerSkipped = true;
+                    continue;
+                }
+                if (line.isBlank()) continue;
 
-      if (numcsv == 0) {// Error handling for no CSVs
-        System.out.println("");
-        System.out.println("No CSV files were found in the filesToRename folder!!!");
-        System.out.println("Please place only 1 CSV file in the folder and rerun the program.");
-        System.out.println("");
-        System.exit(0);
+                String[] details = line.split(",", -1);
+                if (details.length < 3) {
+                    logger.warn("Skipping malformed CSV row at line {}: {}", lineNum, line);
+                    continue;
+                }
 
-      }
+                String[] pidParts = details[0].split("\\s+");
+                if (pidParts.length < 2) {
+                    logger.warn("Skipping row with invalid PID at line {}: {}", lineNum, line);
+                    continue;
+                }
 
-      String path = csvpath;
-      File dataFile = new File(path);
-      Scanner fileReader = new Scanner(dataFile);
-      String[] details = new String[11];
-      String[] pid = new String[2];
-      int count = 0;
-      String line;
-      line = fileReader.nextLine();// skips CSV headings.
-      while (fileReader.hasNextLine()) {
+                String pid = pidParts[1];
+                String name = details[1];
+                String id = details[2];
 
-        line = fileReader.nextLine();
-        details = line.split(",");
-        pid = details[0].split("\\s+");// Split at whitespace and tab space for PID (Takes out the word "Participant")
+                students.add(new Student(pid, name, id, true));
+            }
+        } catch (IOException e) {
+            throw new FileFixerException("Failed to read CSV file: " + csvPath, e);
+        }
 
-        Students[count] = new Student(pid[1], details[1], details[2], true);
-
-        count++;
-
-      }
-
-      fileReader.close();
-    } catch (Exception e) {
-
-    }
-    return Students;
-  }
-
-  public ToRename[] LoadDirectoryFiles() throws Exception {
-    String user = System.getProperty("user.dir");
-    try {
-      File f = new File(user + "/filesToRename");
-
-      pathnames = f.list();
-
-      if (pathnames.length == 0) {
-        System.out.println("");
-        System.out.println("No files found in toBeRenamed folder!!!");
-        System.out.println("Re-run program and type HELP for help.");
-        System.out.println("");
-        System.exit(0);
-      }
-
-      toRename[0] = new ToRename("default", "default", "default", true);
-      for (String pathname : pathnames) {
-
-        toRename[0].addToList(pathname);
-
-      }
-    } catch (Exception e) {
-
+        logger.info("Loaded {} students from CSV", students.size());
+        return students;
     }
 
-    return toRename;
-  }
+    public ToRename loadDirectoryFiles() throws FileFixerException {
+        ensureDirectoryExists();
 
+        ToRename toRename = new ToRename("default", "default", "default", true);
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(baseDir)) {
+            for (Path entry : stream) {
+                toRename.addToList(entry.getFileName().toString());
+            }
+        } catch (IOException e) {
+            throw new FileFixerException("Failed to read directory: " + baseDir, e);
+        }
+
+        if (toRename.getFileCount() == 0) {
+            throw new FileFixerException("No files found in filesToRename folder");
+        }
+
+        logger.info("Found {} files in directory", toRename.getFileCount());
+        return toRename;
+    }
+
+    private void ensureDirectoryExists() throws FileFixerException {
+        if (!Files.exists(baseDir)) {
+            try {
+                Files.createDirectories(baseDir);
+            } catch (IOException e) {
+                throw new FileFixerException("Failed to create directory: " + baseDir, e);
+            }
+        }
+        if (!Files.isDirectory(baseDir)) {
+            throw new FileFixerException("Path is not a directory: " + baseDir);
+        }
+    }
+
+    private List<Path> findCsvFiles() throws FileFixerException {
+        List<Path> csvFiles = new ArrayList<>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(baseDir)) {
+            for (Path entry : stream) {
+                if (Files.isRegularFile(entry) && entry.getFileName().toString().toLowerCase().endsWith(".csv")) {
+                    csvFiles.add(entry);
+                }
+            }
+        } catch (IOException e) {
+            throw new FileFixerException("Failed to scan directory for CSV files", e);
+        }
+        return csvFiles;
+    }
+
+    public Path getBaseDir() {
+        return baseDir;
+    }
 }
