@@ -55,4 +55,117 @@ Run the program in your IDE and follow on screen instructions or type HELP.
 - Nickal Winter nickwinter01@gmail.com
 - Nicholas Smith nicosmith.smith3@gmail.com
 
+# Developer Setup
 
+## Prerequisites
+
+| Tool | Minimum Version | Check |
+|------|----------------|-------|
+| JDK | 11 (recommended: 17 or 21) | `java -version` |
+| Maven | 3.6+ | `mvn -version` |
+| Git | 2.x | `git --version` |
+
+Install JDK and Maven if you don't have them:
+
+```bash
+# Ubuntu/Debian
+sudo apt install openjdk-17-jdk maven
+
+# macOS (Homebrew)
+brew install openjdk@17 maven
+
+# Windows (Scoop)
+scoop install openjdk17 maven
+```
+
+## Quick Start
+
+```bash
+# 1. Clone the repository
+git clone <repo-url>
+cd FileFixer
+
+# 2. Verify the project compiles
+cd filefixer
+mvn clean compile
+
+# 3. Run all tests
+mvn test
+
+# 4. Run the application
+mvn exec:java -Dexec.mainClass="com.example.FileFixer"
+
+# Or run directly from the IDE by executing FileFixer.java
+```
+
+## Useful Maven Commands
+
+| Command | What it does |
+|---------|-------------|
+| `mvn clean compile` | Clean and compile source code |
+| `mvn test` | Run all unit tests |
+| `mvn clean package` | Build the JAR file (output in `target/`) |
+| `mvn clean install` | Build and install to local Maven repository |
+| `mvn exec:java -Dexec.mainClass="com.example.FileFixer"` | Run the application |
+| `mvn dependency:tree` | Show full dependency tree |
+| `mvn dependency:analyze` | Find unused or undeclared dependencies |
+
+## Adding Dependencies to `pom.xml`
+
+Open `filefixer/pom.xml` and add a `<dependency>` block inside the `<dependencies>` section:
+
+```xml
+<dependencies>
+    <!-- Existing JUnit dependency -->
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>5.10.2</version>
+        <scope>test</scope>
+    </dependency>
+
+    <!-- Add new dependencies below this line -->
+    <dependency>
+        <groupId>com.opencsv</groupId>
+        <artifactId>opencsv</artifactId>
+        <version>5.9</version>
+    </dependency>
+</dependencies>
+```
+
+Then refresh:
+
+```bash
+# Download the new dependency and verify it resolves
+mvn clean compile
+```
+
+```xml
+<dependency>
+    <groupId>com.opencsv</groupId>
+    <artifactId>opencsv</artifactId>
+    <version>5.9</version>
+</dependency>
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-simple</artifactId>
+    <version>2.0.12</version>
+</dependency>
+<dependency>
+    <groupId>org.assertj</groupId>
+    <artifactId>assertj-core</artifactId>
+    <version>3.25.3</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.mockito</groupId>
+    <artifactId>mockito-core</artifactId>
+    <version>5.11.0</version>
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>commons-io</groupId>
+    <artifactId>commons-io</artifactId>
+    <version>2.16.1</version>
+</dependency>
+```
