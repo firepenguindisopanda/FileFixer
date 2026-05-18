@@ -1,64 +1,76 @@
 package com.example;
 
-import java.io.File;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Scanner;
 
 public class FileFixer {
 
-    public static void main(String[] args) throws Exception {
+    private static final Logger logger = LoggerFactory.getLogger(FileFixer.class);
 
-        Scanner s = new Scanner(System.in);
-        String user = System.getProperty("user.dir");
-        String Desktop = user + "/" + "filesToRename";
-        File Desk = new File(Desktop);
-        Desk.mkdir();
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Path baseDir = Paths.get(System.getProperty("user.dir"), "filesToRename");
+        Path outputDir = baseDir.resolve("renamedFiles");
 
-        System.out.println("Welcome to file fixer!");
-        System.out.println(
-                "Ensure that the files you wish to rename along with your CSV file is stored in the filesToRename folder located in the project folder.");
-        System.out.println("");
-        System.out.println("Press Enter to start the program, type HELP for help or type EXIT to exit.");
+        try {
+            System.out.println("Welcome to FileFixer!");
+            System.out.println("Ensure that your CSV file and PDFs are in: " + baseDir.toAbsolutePath());
+            System.out.println();
+            System.out.println("Press Enter to start, type HELP for help, or type EXIT to quit.");
 
-        String readString = s.nextLine();
-        if (readString.equals("HELP") || readString.equals("help")) {
-            System.out.println("");
-            System.out.println("********HELP********");
-            System.out.println("1)Run program.");
-            System.out.println(
-                    "2)Open the project folder and look for the filesToRename folder that was created when you ran the program.");
-            System.out.println(
-                    "3)Place your PDF files that you wish to rename and your CSV file in the filesToRename folder.");
-            System.out.println("4)Press enter to start the program.");
-            System.out.println(
-                    "5)Your renamed files can be found in the renamedFiles folder that is located in the filesToRename folder.");
-            System.out.println("Files that are not PDF or CSV will be ignored. Only 1 CSV allowed in the folder.");
-            System.out.println(
-                    "Files that are not valid, meaning they are a PDF but of no relevance ie not an assignment file, will be ignored.");
-            System.out.println("");
-            System.out.println("Press enter to start the program or type EXIT to exit.");
-            readString = s.nextLine();
+            String input = scanner.nextLine();
+
+            if (input.equalsIgnoreCase("HELP")) {
+                printHelp(baseDir);
+                input = scanner.nextLine();
+            }
+
+            while (!input.isEmpty() && !input.equalsIgnoreCase("EXIT")) {
+                System.out.println("Invalid input. Press Enter to start, type HELP, or type EXIT.");
+                input = scanner.nextLine();
+            }
+
+            if (input.equalsIgnoreCase("EXIT")) {
+                System.out.println("Exiting FileFixer.");
+                return;
+            }
+
+            Reader reader = new Reader(baseDir);
+            List<Student> students = reader.loadCsvData();
+            ToRename toRename = reader.loadDirectoryFiles();
+            FileCollection fileCollection = new FileCollection();
+            Rename rename = new Rename(outputDir);
+
+            rename.startRename(students, toRename, fileCollection);
+
+            System.out.println("Done. Renamed files are in: " + outputDir.toAbsolutePath());
+            System.out.println("Check missingSubmissions.txt for missing or problematic submissions.");
+
+        } catch (FileFixerException e) {
+            System.err.println("Error: " + e.getMessage());
+            logger.error("FileFixer failed", e);
+            System.exit(1);
+        } finally {
+            scanner.close();
         }
-        while (!readString.equals("HELP") && !readString.equals("Help") && !readString.equals("EXIT")
-                && !readString.equals("exit") && !readString.isEmpty()) {
-            System.out.println("Invalid input!!!");
-            System.out.println("Press enter to start the program, type HELP for help or type EXIT to exit.");
-            readString = s.nextLine();
-        }
+    }
 
-        if (readString.equals("exit") || readString.equals("EXIT")) {
-            System.exit(0);
-        }
-        if (readString.isEmpty()) {
-            Reader r1 = new Reader();
-            Rename r = new Rename();
-            FileCollection f = new FileCollection();
-            Student[] student = r1.LoadCsvData();
-            ToRename[] rename = r1.LoadDirectoryFiles();
-            f.getList(rename[0].getToBeRenamedList());
-            r.startRename(student, rename, f);
-            s.close();
-        }
-        s.close();
-
+    private static void printHelp(Path baseDir) {
+        System.out.println();
+        System.out.println("******** HELP ********");
+        System.out.println("1. Run the program.");
+        System.out.println("2. Place your PDFs and CSV file in: " + baseDir.toAbsolutePath());
+        System.out.println("3. Press Enter to start.");
+        System.out.println("4. Renamed files will appear in the renamedFiles/ subfolder.");
+        System.out.println();
+        System.out.println("Only 1 CSV file is allowed. Non-PDF/CSV files are ignored.");
+        System.out.println("Files that don't match any student will be listed in missingSubmissions.txt.");
+        System.out.println();
+        System.out.println("Press Enter to start or type EXIT to quit.");
     }
 }
