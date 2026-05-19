@@ -227,6 +227,8 @@ For a standalone `.deb`/`.dmg`/`.exe` without requiring Java:
 ```bash
 mvn clean package
 jpackage --input target/ --name FileFixer --main-jar filefixer-1.0-SNAPSHOT.jar --main-class com.filefixer.ui.FileFixerApp --type deb
+
+jpackage --input target/ --name FileFixer --main-jar filefixer-1.0-SNAPSHOT.jar --main-class com.filefixer.ui.FileFixerApp --type exe
 ```
 Requires `jpackage` (included in JDK 17+) and platform-specific tools (`dpkg-deb` on Linux).
 
