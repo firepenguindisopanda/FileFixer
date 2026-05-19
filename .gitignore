@@ -29,3 +29,5 @@ sample*
 .vscode
 
 docs/
+
+/filefixer/filesToRename
