@@ -1,4 +1,4 @@
-package com.example;
+package com.filefixer.service;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -1,4 +1,12 @@
-package com.example;
+package com.filefixer.cli;
+
+import com.filefixer.exception.FileFixerException;
+import com.filefixer.model.Student;
+import com.filefixer.model.ToRename;
+import com.filefixer.service.FileCollection;
+import com.filefixer.service.Rename;
+import com.filefixer.service.RenameProgress;
+import com.filefixer.service.Reader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,9 +16,9 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
-public class FileFixer {
+public class FileFixerCli {
 
-    private static final Logger logger = LoggerFactory.getLogger(FileFixer.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileFixerCli.class);
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -44,9 +52,9 @@ public class FileFixer {
             List<Student> students = reader.loadCsvData();
             ToRename toRename = reader.loadDirectoryFiles();
             FileCollection fileCollection = new FileCollection();
-            Rename rename = new Rename(outputDir);
+            Rename renameService = new Rename(outputDir);
 
-            rename.startRename(students, toRename, fileCollection);
+            renameService.startRename(students, toRename, fileCollection, RenameProgress.NOOP);
 
             System.out.println("Done. Renamed files are in: " + outputDir.toAbsolutePath());
             System.out.println("Check missingSubmissions.txt for missing or problematic submissions.");

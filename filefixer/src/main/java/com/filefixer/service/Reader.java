@@ -1,4 +1,8 @@
-package com.example;
+package com.filefixer.service;
+
+import com.filefixer.exception.FileFixerException;
+import com.filefixer.model.Student;
+import com.filefixer.model.ToRename;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,6 @@
-package com.example;
+package com.filefixer;
+
+import com.filefixer.service.FileCollection;
 
 import org.junit.jupiter.api.Test;
 

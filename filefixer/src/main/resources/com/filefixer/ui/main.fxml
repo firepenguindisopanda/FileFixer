@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.filefixer.ui.MainController" stylesheets="@styles.css">
+
+    <top>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="16" right="20" bottom="12" left="20"/>
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <Label text="FileFixer" styleClass="app-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="v1.0" styleClass="version-label"/>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Label text="Input Directory:" styleClass="field-label"/>
+                <TextField fx:id="directoryField" promptText="Select folder with CSV and PDFs" HBox.hgrow="ALWAYS"/>
+                <Button text="Browse..." onAction="#handleBrowse" styleClass="btn-secondary"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox spacing="0">
+            <padding>
+                <Insets top="0" right="20" bottom="0" left="20"/>
+            </padding>
+            <Label text="Students" styleClass="section-title">
+                <padding>
+                    <Insets top="8" bottom="4"/>
+                </padding>
+            </Label>
+            <TableView fx:id="studentTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colName" text="Name" prefWidth="180"/>
+                    <TableColumn fx:id="colPid" text="PID" prefWidth="80"/>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="100"/>
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="100"/>
+                    <TableColumn fx:id="colLocation" text="Location" prefWidth="180"/>
+                    <TableColumn fx:id="colRenamed" text="Renamed File" prefWidth="200"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+
+    <bottom>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="20" bottom="16" left="20"/>
+            </padding>
+
+            <VBox fx:id="logPanel" spacing="6">
+                <Label text="Activity Log" styleClass="section-title"/>
+                <TextArea fx:id="logArea" editable="false" prefHeight="120" wrapText="true"/>
+            </VBox>
+
+            <ProgressBar fx:id="progressBar" prefWidth="Infinity" progress="0"/>
+
+            <HBox alignment="CENTER" spacing="12">
+                <Button fx:id="startBtn" text="Start Renaming" onAction="#handleStartRename" styleClass="btn-primary" prefWidth="160"/>
+                <Button fx:id="openFolderBtn" text="Open Output Folder" onAction="#handleOpenOutput" styleClass="btn-secondary" disable="true"/>
+                <Button fx:id="exportBtn" text="Export Report" onAction="#handleExportReport" styleClass="btn-secondary" disable="true"/>
+            </HBox>
+
+            <Label fx:id="statusLabel" styleClass="status-label" text="Ready"/>
+        </VBox>
+    </bottom>
+
+</BorderPane>

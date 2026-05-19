@@ -1,10 +1,10 @@
-package com.example;
+package com.filefixer.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ToRename implements Individual {
+public class ToRename {
 
     private final String pid;
     private final String name;
@@ -20,27 +20,22 @@ public class ToRename implements Individual {
         this.toBeRenamed = new ArrayList<>();
     }
 
-    @Override
     public String getPID() {
         return pid;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public String getID() {
         return id;
     }
 
-    @Override
     public boolean getAttendanceStatus() {
         return attendanceStatus;
     }
 
-    @Override
     public void setAttendance(boolean status) {
         this.attendanceStatus = status;
     }

@@ -1,4 +1,4 @@
-package com.example;
+package com.filefixer.exception;
 
 public class FileFixerException extends Exception {
 

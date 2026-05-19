@@ -1,4 +1,6 @@
-package com.example;
+package com.filefixer.service;
+
+import com.filefixer.model.Student;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 public class ComplexRename {
@@ -13,7 +16,8 @@ public class ComplexRename {
     private static final Logger logger = LoggerFactory.getLogger(ComplexRename.class);
 
     static void startRenamingProcess(List<Student> students, FileCollection fileCollection,
-                                      Path outputDir, List<String> invalidSubmissions) {
+                                      Path outputDir, List<String> invalidSubmissions,
+                                      RenameProgress progress) {
         try {
             Files.createDirectories(outputDir);
         } catch (IOException e) {
@@ -22,8 +26,10 @@ public class ComplexRename {
         }
 
         Path baseDir = outputDir.getParent();
+        List<String> files = new java.util.ArrayList<>(java.util.stream.StreamSupport.stream(fileCollection.spliterator(), false).toList());
 
-        for (String fileName : fileCollection) {
+        for (int i = 0; i < files.size(); i++) {
+            String fileName = files.get(i);
             if (fileName.contains(".csv")) continue;
 
             String[] spaceSplit = fileName.split(" ");
@@ -63,19 +69,24 @@ public class ComplexRename {
                 Path target = outputDir.resolve(newFileName);
 
                 try {
-                    Files.copy(source, target, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
                     student.setAttendance(false);
                     matched = true;
+                    progress.onFileProcessed(fileName, student, true, newFileName);
                     logger.info("Renamed (complex): {} -> {}", fileName, newFileName);
                 } catch (IOException e) {
                     logger.error("Failed to copy {}: {}", fileName, e.getMessage());
+                    progress.onFileProcessed(fileName, student, false, null);
                 }
                 break;
             }
 
             if (!matched && fileName.toLowerCase().endsWith(".pdf")) {
                 invalidSubmissions.add("Problem submission to review: " + fileName);
+                progress.onFileProcessed(fileName, null, false, null);
             }
+
+            progress.onProgress(i + 1, files.size());
         }
     }
 

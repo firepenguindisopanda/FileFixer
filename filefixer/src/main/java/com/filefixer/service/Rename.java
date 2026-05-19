@@ -1,4 +1,7 @@
-package com.example;
+package com.filefixer.service;
+
+import com.filefixer.model.Student;
+import com.filefixer.model.ToRename;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,14 +23,20 @@ public class Rename {
         this.outputDir = outputDir;
     }
 
-    public void startRename(List<Student> students, ToRename toRename, FileCollection fileCollection) {
+    public void startRename(List<Student> students, ToRename toRename, FileCollection fileCollection,
+                            RenameProgress progress) {
         fileCollection.setFiles(toRename.getToBeRenamedList());
 
-        SimpleRename.startRenamingProcess(students, fileCollection, outputDir, invalidSubmissions);
-        StandardRename.startRenamingProcess(students, fileCollection, outputDir, invalidSubmissions);
-        ComplexRename.startRenamingProcess(students, fileCollection, outputDir, invalidSubmissions);
+        SimpleRename.startRenamingProcess(students, fileCollection, outputDir, invalidSubmissions, progress);
+        StandardRename.startRenamingProcess(students, fileCollection, outputDir, invalidSubmissions, progress);
+        ComplexRename.startRenamingProcess(students, fileCollection, outputDir, invalidSubmissions, progress);
 
         generateReport(students);
+
+        int renamed = (int) students.stream().filter(s -> !s.getAttendanceStatus()).count();
+        int missing = students.size() - renamed;
+        int review = (int) invalidSubmissions.stream().filter(s -> !s.isBlank()).count();
+        progress.onComplete(renamed, missing, review);
     }
 
     private void generateReport(List<Student> students) {
@@ -72,5 +81,13 @@ public class Rename {
         } catch (IOException e) {
             logger.error("Failed to copy {} to {}: {}", originalFile, newFile, e.getMessage());
         }
+    }
+
+    public Path getOutputDir() {
+        return outputDir;
+    }
+
+    public List<String> getInvalidSubmissions() {
+        return List.copyOf(invalidSubmissions);
     }
 }

@@ -109,6 +109,10 @@ mvn exec:java -Dexec.mainClass="com.example.FileFixer"
 | `mvn exec:java -Dexec.mainClass="com.example.FileFixer"` | Run the application |
 | `mvn dependency:tree` | Show full dependency tree |
 | `mvn dependency:analyze` | Find unused or undeclared dependencies |
+| `mvn javafx:run` | Launch the desktop UI |
+| `mvn clean package` | Build the fat JAR (12MB) |
+| `mvn test` | Run all tests |
+| `java -jar target/filefixer-1.0-SNAPSHOT.jar` | Run the CLI from the built JAR |
 
 ## Adding Dependencies to `pom.xml`
 
@@ -169,3 +173,69 @@ mvn clean compile
     <version>2.16.1</version>
 </dependency>
 ```
+
+---
+
+### Prerequisites
+- **Java 17+** — [Download](https://adoptium.net/) if you don't have it
+- **Maven 3.6+** — for building from source (not needed to run the JAR)
+
+### Run the Desktop App
+```bash
+mvn javafx:run
+```
+
+### Run the CLI
+```bash
+java -jar target/filefixer-1.0-SNAPSHOT.jar
+```
+
+## How It Works
+
+1. Place your CSV grading export and PDF assignment files in a folder
+2. Open the app and select that folder (or press Enter in CLI mode)
+3. The app matches each PDF to a student by name, ID, or PID
+4. Renamed copies are placed in a `renamedFiles/` subfolder
+5. A `missingSubmissions.txt` report lists unmatched files and missing students
+
+### Naming Conventions Supported
+
+| Type | Example Input | Output |
+|------|--------------|--------|
+| Simple | `John_Doe_assignsubmission_file_A1.pdf` | `John Doe_601725_assignsubmission_file_A1.pdf` |
+| Standard | `1409121490-602637_John_Doe_601683_A1.pdf` | `John Doe_601725_assignsubmission_file_A1.pdf` |
+| Complex | `Assignment 1 John Doe.pdf` | `John Doe_601725_assignsubmission_file_Assignment 1.pdf` |
+
+The CLI and desktop UI share the same service layer. No business logic duplication.
+
+## Distribution
+
+### For Users
+Download the `filefixer-1.0-SNAPSHOT.jar` (12MB) and run:
+```bash
+java -jar filefixer-1.0-SNAPSHOT.jar
+```
+
+### For the Desktop UI
+Users need JavaFX installed system-wide, or developers can run:
+```bash
+mvn javafx:run
+```
+
+### Building a Native Installer (Optional)
+For a standalone `.deb`/`.dmg`/`.exe` without requiring Java:
+```bash
+mvn clean package
+jpackage --input target/ \
+         --name FileFixer \
+         --main-jar filefixer-1.0-SNAPSHOT.jar \
+         --main-class com.filefixer.ui.FileFixerApp \
+         --type deb
+```
+Requires `jpackage` (included in JDK 17+) and platform-specific tools (`dpkg-deb` on Linux).
+
+
+## Contributing
+
+1. Run `mvn test` before submitting changes
+2. Keep changes focused. one feature or fix per PR

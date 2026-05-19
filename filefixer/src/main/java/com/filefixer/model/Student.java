@@ -1,6 +1,6 @@
-package com.example;
+package com.filefixer.model;
 
-public class Student implements Individual {
+public class Student {
 
     private final String pid;
     private final String name;
@@ -34,27 +34,22 @@ public class Student implements Individual {
         this.lastModified = lastModified;
     }
 
-    @Override
     public String getPID() {
         return pid;
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public String getID() {
         return id;
     }
 
-    @Override
     public boolean getAttendanceStatus() {
         return attendanceStatus;
     }
 
-    @Override
     public void setAttendance(boolean status) {
         this.attendanceStatus = status;
     }

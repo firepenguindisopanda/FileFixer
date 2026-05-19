@@ -1,4 +1,6 @@
-package com.example;
+package com.filefixer;
+
+import com.filefixer.model.ToRename;
 
 import org.junit.jupiter.api.Test;
 
